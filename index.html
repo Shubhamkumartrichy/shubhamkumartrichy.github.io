@@ -51,27 +51,28 @@
 
             <!-- Second Row - Timeline and Music -->
             <div class="content-row about-second-row">
-                <div class="content-card music-card" style="position:relative; overflow:hidden; height:340px;">
-                    <div class="music-overlay" style="position:absolute;top:18px;left:18px;z-index:2;">
-                        <span style="font-size:1.6rem;font-weight:700;color:#fff;text-shadow:1px 1px 8px #000;">Music</span>
-                    </div>
-                    <div class="music-info-icon" title="Click on the image to listen"
-                         style="position:absolute;top:18px;right:18px;z-index:2;cursor:pointer;">
-                        <i class="fas fa-info-circle" style="font-size:1.3rem;color:#fff;text-shadow:1px 1px 8px #000;"></i>
-                    </div>
-                    <div class="music-slider" style="height:100%;width:100%;position:relative;">
-                        <img id="music-poster" src="Media/Music/experience_einaudi.jpg" alt="Music Poster"
-                             style="width:100%;height:100%;object-fit:cover;display:block;cursor:pointer;border-radius:0;">
-                        <button class="music-nav-btn prev-btn"
-                            style="position:absolute;top:50%;left:18px;transform:translateY(-50%);background:rgba(0,0,0,0.3);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;z-index:2;cursor:pointer;">
-                            <i class="fas fa-chevron-left" style="color:#fff;font-size:1.3rem;"></i>
-                        </button>
-                        <button class="music-nav-btn next-btn"
-                            style="position:absolute;top:50%;right:18px;transform:translateY(-50%);background:rgba(0,0,0,0.3);border:none;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;z-index:2;cursor:pointer;">
-                            <i class="fas fa-chevron-right" style="color:#fff;font-size:1.3rem;"></i>
-                        </button>
-                        <div class="music-dots" style="position:absolute;bottom:18px;left:0;width:100%;display:flex;justify-content:center;z-index:2;">
+                <div class="content-card music-card">
+                    <div class="music-book">
+                        <h3 class="card-title">Today's Track</h3>
+                        <div class="music-body">
+                            <div class="album-art" style="background-image: url('Media/musicpic1.jpeg');"></div>
+                            <div class="track-info">
+                                <div class="track-title">Right Here Right Now</div>
+                                <div class="track-artist">Bachchan, Sunidhi...</div>
+                                <div class="progress-row">
+                                    <div class="progress-track">
+                                        <div class="progress-dot"></div>
+                                    </div>
+                                    <div class="time">0:45</div>
+                                </div>
+                            </div>
                         </div>
+                        <div class="music-controls">
+                            <button class="ctrl prev" title="Previous"><i class="fas fa-backward"></i></button>
+                            <button class="ctrl play" title="Play"><i class="fas fa-play"></i></button>
+                            <button class="ctrl next" title="Next"><i class="fas fa-forward"></i></button>
+                        </div>
+                        <a class="open-spotify" href="#" target="_blank">Open on Spotify ↗</a>
                     </div>
                 </div>
                 <div class="content-card">
@@ -155,8 +156,8 @@
                         <span class="date">September 30, 2024</span>
                         <span class="category">Blog</span>
                     </div>
-                    <h3 class="card-title">GSoC'24 - ML4SCI</h3>
-                    <p class="card-description">I'm thrilled to share that I've been selected for Google Summer of Code (GSoC) with my favorite organization MI4SCI. I'll be working on developing equivariant neural networks for dark matter substructure with strong lensing.</p>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                     <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
                 </div>
 
@@ -177,11 +178,11 @@
 
                 <div class="content-card">
                     <div class="card-header">
-                        <span class="date">March 21, 2025</span>
+                        <span class="date">March 21, 2026</span>
                         <span class="category">Blog</span>
                     </div>
-                    <h3 class="card-title">GATE 2025 Experiences</h3>
-                    <p class="card-description">This blog contains my experiences and preparation strategies for GATE 2025.</p>
+                    <h3 class="card-title">GATE 2026 Experiences</h3>
+                    <p class="card-description">This blog contains my experiences and preparation strategies for GATE 2026.</p>
                     <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
                 </div>
             </div>
@@ -195,8 +196,8 @@
                     </div>
                     <div class="card-content-with-image">
                         <div class="text-content">
-                            <h3 class="card-title">Replicating AlphaGo</h3>
-                            <p class="card-description">This blog discusses my attempts to replicate AlphaGo for a 9x9 Go board, detailing the challenges and insights.</a></p>
+                            <h3 class="card-title">Coming Soon...</h3>
+                            <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                         </div>
                         <div class="go-board-image">
                             <img src="Media/Game.png" alt="Go Board" class="go-board-img">
@@ -206,13 +207,13 @@
                 </div>
 
                 <div class="content-card">
-                    <h3 class="card-title">File Archive</h3>
+                    <h3 class="card-title">Coming Soon...</h3>
                     <div class="tags">
                         <span class="tag">Project</span>
                         <span class="tag">Baduk</span>
                         <span class="tag">Softwares</span>
                     </div>
-                    <p class="card-description">This is a project to collect files such as Go datasets, tsumegos, software, and more. If you have any tsumegos, Go datasets, or software (especially related to baduk/weiqi/go), please submit a PR or ping me.</p>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                     <button class="visit-archive-btn" onclick="window.location.href='under-construction.html'">Visit Archive ></button>
                 </div>
             </div>
@@ -246,8 +247,8 @@
                     <div class="card-header">
                         <span class="date">Feb 20, 2025</span>
                     </div>
-                    <h3 class="card-title">Lumine</h3>
-                    <p class="card-description">Lumine is a deep learning library built from scratch (No NumPy or any external libraries) using CFFI. You can find the source code on GitHub.</p>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                 </div>
 
                 <div class="content-card">
@@ -255,8 +256,8 @@
                         <span class="date">June 10, 2025</span>
                         <span class="new-tag">New</span>
                     </div>
-                    <h3 class="card-title">Weiqi-Books</h3>
-                    <p class="card-description">This project was started by 101books but is no longer maintained. I am now working to continue its development. Check it out at Weiqi Master.</p>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                 </div>
             </div>
 
@@ -278,8 +279,8 @@
                         <span class="date">Jan 20, 2024</span>
                         <span class="archived-tag">Archived</span>
                     </div>
-                    <h3 class="card-title">GANetic</h3>
-                    <p class="card-description">A collection of highly customizable GANs implemented in PyTorch. You can find the source code on GitHub.</p>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                 </div>
             </div>
         </main>
