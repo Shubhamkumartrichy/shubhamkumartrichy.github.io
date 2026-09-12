@@ -291,7 +291,7 @@ body {
 .news-item {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: 10px 0 8px 0;
     border-bottom: 1px solid #eee;
 }
@@ -310,6 +310,7 @@ body {
     color: #888;
     font-size: 0.90em;   /* even smaller font size */
     margin-top: 2px;
+    white-space: nowrap;
 }
 
 /* Social Icons */
