@@ -202,6 +202,44 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Music Player Functionality
+function initializeVisualEscapeCarousel() {
+    const carousel = document.querySelector('.visual-escape-carousel');
+    if (!carousel) return;
+
+    const iframe = carousel.querySelector('iframe');
+    const prevBtn = document.querySelector('.ve-prev-btn');
+    const nextBtn = document.querySelector('.ve-next-btn');
+    const dots = document.querySelectorAll('.ve-dot');
+    const currentEl = document.querySelector('.ve-current');
+
+    const videos = [
+        'mMLVr19wYZw',
+        'KJwYBJMSbPI'
+    ];
+
+    function goTo(index) {
+        carousel.dataset.videoIndex = index;
+        iframe.src = `https://www.youtube-nocookie.com/embed/${videos[index]}`;
+        iframe.title = `Visual Escape video ${index + 1}`;
+        if (currentEl) currentEl.textContent = index + 1;
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function() {
+            goTo((Number(carousel.dataset.videoIndex) + 1) % videos.length);
+        });
+    }
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function() {
+            goTo((Number(carousel.dataset.videoIndex) - 1 + videos.length) % videos.length);
+        });
+    }
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+}
+
+document.addEventListener('DOMContentLoaded', initializeVisualEscapeCarousel);
+
 function initializeMusicPlayer() {
     const prevBtn = document.querySelector('.prev-btn');
     const nextBtn = document.querySelector('.next-btn');
