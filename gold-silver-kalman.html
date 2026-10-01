@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold, Silver &amp; a Kalman Filter | Shubham</title>
+    <meta name="description" content="A Kalman-filter gold–silver rotation strategy, backtested over 20 years, with live interactive charts and an honest stress test.">
+    <link rel="icon" type="image/png" href="Media/Favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        :root {
+            --paper: #f5f3ec;
+            --paper-2: #efede5;
+            --canvas: #fbfaf6;
+            --ink: #1d1d1b;
+            --ink-2: #3a3a36;
+            --muted: #75736b;
+            --rule: #d8d5ca;
+            --accent: #b3261e;
+            --link: #2a5db0;
+            --code-bg: #ecebe3;
+            --serif: 'Source Serif 4', Charter, 'Iowan Old Style', Georgia, serif;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+        body {
+            background-color: var(--paper);
+            background-image: radial-gradient(#d3d0c4 1px, transparent 1.2px);
+            background-size: 22px 22px;
+            color: var(--ink);
+            font-family: var(--serif);
+            font-size: 18px;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--link); text-underline-offset: 2px; }
+
+        /* Reading progress */
+        .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--ink); z-index: 50; }
+
+        .page { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+
+        /* Top bar */
+        .topbar {
+            display: flex; align-items: stretch; justify-content: space-between;
+            border-bottom: 1px solid var(--ink);
+            font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
+        }
+        .topbar nav { display: flex; }
+        .topbar a { color: var(--ink); text-decoration: none; padding: 10px 16px; border-right: 1px solid var(--rule); }
+        .topbar a:hover { background: var(--paper-2); }
+        .topbar a.active { background: var(--ink); color: var(--paper); }
+        .topbar .brand { font-family: var(--serif); text-transform: none; letter-spacing: 0; font-size: 16px; font-weight: 600; padding-left: 8px; }
+        .topbar .stamp { align-self: center; color: var(--muted); padding: 0 8px; }
+
+        .crumbs {
+            margin-top: 14px; display: flex; justify-content: space-between; align-items: center;
+            border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink);
+            padding: 6px 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+        }
+        .crumbs b { color: var(--ink); }
+        .crumbs a { color: var(--ink); }
+
+        /* Post head */
+        .post-head { text-align: center; max-width: 720px; margin: 40px auto 0; }
+        .chip { display: inline-block; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; padding: 3px 8px; }
+        .post-head h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 14px 0 12px; font-weight: 700; letter-spacing: -.01em; }
+        .post-head .sub { font-style: italic; color: var(--ink-2); font-size: 19px; }
+        .post-head .meta { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+        .post-head hr { border: 0; border-top: 1px solid var(--ink); margin: 22px auto 0; max-width: 660px; }
+
+        .hero { max-width: 900px; margin: 26px auto 0; text-align: center; }
+        .hero canvas { width: 100%; height: 400px; display: block; }
+        .hero figcaption { font-style: italic; color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+        /* 3-column layout */
+        .layout {
+            display: grid; grid-template-columns: 210px minmax(0, 660px) minmax(0, 1fr);
+            gap: 0 52px; margin-top: 40px;
+        }
+        .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; padding-right: 4px; }
+        .toc h4 { font-family: var(--mono); font-size: 10.5px; letter-spacing: .2em; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--ink); margin-bottom: 10px; }
+        .toc ol { list-style: none; }
+        .toc li a { display: block; position: relative; text-decoration: none; color: var(--ink-2); font-size: 14px; line-height: 1.35; padding: 4px 0 4px 14px; }
+        .toc li.sub a { padding-left: 28px; font-size: 13.5px; color: var(--muted); }
+        .toc li.sub a::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+        .toc li a:hover { color: var(--ink); }
+        .toc li a.active { color: var(--ink); font-weight: 600; }
+        .toc li a.active::after { content: ''; position: absolute; left: 3px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--accent); }
+        .toc li.sub a.active::after { left: 17px; }
+        .toc-mobile { display: none; }
+
+        /* Article */
+        article { position: relative; min-width: 0; }
+        article p { text-align: justify; hyphens: auto; margin-bottom: 18px; }
+        article h2 { font-size: 26px; line-height: 1.3; margin: 52px 0 16px; font-weight: 700; }
+        article h2:first-child { margin-top: 8px; }
+        article h2 .num { color: var(--accent); margin-right: 10px; font-family: var(--mono); font-weight: 600; font-size: 22px; }
+        article h3 { font-size: 20px; font-style: italic; font-weight: 400; margin: 34px 0 12px; }
+        article h3 .anchor, article h2 .anchor { color: #8aa7d6; text-decoration: none; margin-left: 6px; font-style: normal; font-size: .85em; opacity: 0; transition: opacity .15s; }
+        article h3:hover .anchor, article h2:hover .anchor { opacity: 1; }
+        article ul, article ol.list { margin: 0 0 18px 24px; }
+        article ul li { list-style: square; margin-bottom: 6px; padding-left: 4px; }
+        article ul li::marker { color: var(--ink-2); font-size: .8em; }
+        article ol.list li { margin-bottom: 6px; padding-left: 4px; }
+        article strong { font-weight: 600; }
+        code, .mono { font-family: var(--mono); font-size: .82em; font-variant-ligatures: none; }
+        .nc { text-transform: none; letter-spacing: 0; }
+        p code, li code, td code { color: var(--accent); background: transparent; }
+        pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 3px; padding: 16px 18px; overflow-x: auto; margin: 0 0 22px; line-height: 1.55; }
+        pre code.hljs { background: transparent; padding: 0; font-size: 13.2px; }
+        .katex { font-size: 1.04em; }
+        .katex-display { margin: 18px 0 22px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+        .callout { border-left: 3px solid var(--accent); background: var(--paper-2); padding: 14px 18px; margin: 0 0 26px; font-size: 16.5px; }
+        .callout p { margin: 0; text-align: left; }
+        .callout p + p { margin-top: 8px; }
+        .callout.quiet { border-left-color: var(--ink); }
+
+        blockquote { border-left: 2px solid var(--ink); padding: 2px 0 2px 18px; margin: 0 0 22px; font-style: italic; color: var(--ink-2); }
+
+        table { width: 100%; border-collapse: collapse; margin: 4px 0 24px; font-size: 15px; }
+        th, td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+        th { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--ink); }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .table-wrap { overflow-x: auto; }
+
+        /* Figures */
+        figure.fig { margin: 8px 0 28px; }
+        .fig-body { background: var(--canvas); border: 1px solid var(--rule); border-radius: 3px; padding: 14px; }
+        .fig canvas { width: 100%; display: block; }
+        figure.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        figure.fig figcaption b { color: var(--ink); font-family: var(--serif); font-weight: 600; margin-right: 6px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .panel-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+        .bif-svg { width: 100%; height: auto; display: block; }
+        .bif-svg .axis { stroke: #b8b4a8; stroke-width: 1; }
+        .bif-svg .st { stroke: var(--ink); stroke-width: 2; fill: none; }
+        .bif-svg .un { stroke: var(--ink); stroke-width: 1.6; fill: none; stroke-dasharray: 4 4; }
+        .bif-svg .cyc { stroke: var(--accent); stroke-width: 2; fill: none; }
+        .bif-svg text { font-family: var(--mono); font-size: 9px; fill: var(--muted); }
+
+        .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-bottom: 12px; font-family: var(--mono); font-size: 12px; }
+        .controls label { display: flex; align-items: center; gap: 8px; }
+        .controls input[type=range] { width: 170px; accent-color: var(--accent); }
+        .controls output { min-width: 46px; font-weight: 600; color: var(--ink); }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chips button {
+            font-family: var(--mono); font-size: 11px; padding: 3px 9px; background: transparent; color: var(--ink);
+            border: 1px solid var(--ink); border-radius: 2px; cursor: pointer;
+        }
+        .chips button:hover { background: var(--paper-2); }
+        .chips button.on { background: var(--ink); color: var(--paper); }
+        .readout { font-family: var(--mono); font-size: 12px; margin-top: 10px; color: var(--ink-2); min-height: 1.5em; }
+        .readout .tag { background: var(--ink); color: var(--paper); padding: 1px 6px; margin-right: 8px; }
+        .readout .tag.chaos { background: var(--accent); }
+
+        /* Sidenotes */
+        .sn-ref { color: var(--link); font-family: var(--mono); font-size: 11px; vertical-align: super; line-height: 0; margin-left: 2px; text-decoration: none; }
+        .sidenote {
+            float: right; clear: right; width: 230px; margin-right: -282px; margin-top: 4px;
+            font-family: var(--serif); font-size: 13.5px; line-height: 1.45; color: var(--muted); text-align: left;
+        }
+        .sidenote .n { color: var(--accent); font-family: var(--mono); font-weight: 600; font-size: 11px; margin-right: 4px; }
+
+        .tags { border-top: 1px solid var(--ink); margin-top: 40px; padding-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tags span.t { border: 1px solid var(--rule); padding: 2px 8px; color: var(--ink-2); background: var(--canvas); }
+
+        .refs { font-size: 15px; }
+        .refs li { margin-bottom: 8px; text-align: left; }
+
+        footer.site { text-align: center; padding: 40px 0 30px; color: var(--muted); font-size: 14px; }
+
+        /* Responsive */
+        @media (max-width: 1220px) {
+            .layout { grid-template-columns: 200px minmax(0, 1fr); gap: 0 44px; }
+            .sidenote {
+                float: none; display: block; width: auto; margin: 0 0 18px; padding: 8px 12px;
+                border-left: 2px solid var(--rule); background: rgba(255,255,255,.35);
+            }
+        }
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: minmax(0, 1fr); }
+            .toc { display: none; }
+            .toc-mobile { display: block; margin-bottom: 28px; border: 1px solid var(--ink); background: var(--canvas); }
+            .toc-mobile summary { cursor: pointer; padding: 10px 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .2em; font-weight: 600; }
+            .toc-mobile .toc { display: block; position: static; max-height: none; padding: 0 14px 10px; }
+            .toc-mobile .toc h4 { display: none; }
+            .topbar .stamp { display: none; }
+            .hero canvas { height: 300px; }
+        }
+        @media (max-width: 640px) {
+            body { font-size: 17px; }
+            article p { text-align: left; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .topbar a { padding: 10px 10px; }
+            .crumbs .date { display: none; }
+            .controls input[type=range] { width: 130px; }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+        /* Headline result strip */
+        .lede { font-size: 20px; line-height: 1.6; }
+        .stat-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--ink); background: var(--canvas); margin: 4px 0 28px; }
+        .stat-strip > div { padding: 12px 14px; border-right: 1px solid var(--rule); }
+        .stat-strip > div:last-child { border-right: 0; }
+        .stat-strip .k { font-family: var(--mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+        .stat-strip .v { font-size: 24px; font-weight: 700; line-height: 1.25; margin-top: 4px; font-variant-numeric: tabular-nums; }
+        .stat-strip .s { font-size: 13px; color: var(--muted); line-height: 1.4; margin-top: 2px; }
+        .stat-strip .win .v { color: #2ca02c; }
+        @media (max-width: 640px) {
+            .stat-strip { grid-template-columns: 1fr 1fr; }
+            .stat-strip > div:nth-child(2) { border-right: 0; }
+            .stat-strip > div:nth-child(-n+2) { border-bottom: 1px solid var(--rule); }
+            .lede { font-size: 18px; }
+        }
+    </style>
+    <script src="data/gld-slv.js"></script>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="page">
+
+    <header class="topbar">
+        <nav>
+            <a href="index.html" class="brand">Shubham Kumar</a>
+            <a href="index.html">Home</a>
+            <a href="blog.html" class="active">Blog</a>
+        </nav>
+        <span class="stamp nc">β ≈ GLD / SLV</span>
+    </header>
+
+    <div class="crumbs">
+        <span><b>Blog</b> / Math</span>
+        <span class="date">2025.12.20</span>
+        <a href="blog.html">← All entries</a>
+    </div>
+
+    <div class="post-head">
+        <span class="chip">MATH</span>
+        <h1>Gold, Silver &amp; a Kalman Filter</h1>
+        <p class="sub">How a pairs-trading experiment turned into a gold–silver rotation strategy, and what a 20-year backtest really says about it.</p>
+        <div class="meta">Dec 20, 2025 · 15 min read</div>
+        <hr>
+    </div>
+
+    <figure class="hero">
+        <canvas id="hero" aria-label="GLD and SLV prices from 2006 to 2026, rebased to 1"></canvas>
+        <figcaption>GLD (gold) and SLV (silver) since April 2006, both rebased to 1 on a log scale</figcaption>
+    </figure>
+
+    <div class="layout">
+        <aside class="toc" id="toc" aria-label="Table of contents">
+            <h4>TABLE OF CONTENTS</h4>
+            <ol></ol>
+        </aside>
+
+        <article id="post">
+            <details class="toc-mobile"><summary>TABLE OF CONTENTS</summary><div class="toc"><ol></ol></div></details>
+
+            <div class="callout">
+                <p><strong>Info.</strong> The code for this article is on <a href="https://github.com/Shubhamkumartrichy/Quant_Commodity_Rotation">GitHub</a>. Every chart below re-runs the backtest live in your browser on 20 years of daily GLD and SLV prices, so you can change the settings and watch the results move.</p>
+            </div>
+
+            <h2 id="context">A Little Bit of Context</h2>
+
+            <p class="lede">Put ₹10,000 into this strategy on <strong>28 April 2006</strong>, leave it alone, and by <strong>12 February 2026</strong> it had grown to <strong>₹111,594</strong>. That's a 1015.94% return in just under 20 years, against 593.49% for simply holding gold and 390.44% for holding silver.</p>
+
+            <div class="stat-strip" role="group" aria-label="Headline backtest results">
+                <div><div class="k">Period</div><div class="v">19.8 yrs</div><div class="s">28 Apr 2006 – 12 Feb 2026</div></div>
+                <div class="win"><div class="k">Our strategy</div><div class="v">+1015.94%</div><div class="s">₹10,000 → ₹111,594</div></div>
+                <div><div class="k">Hold gold</div><div class="v">+593.49%</div><div class="s">Buy &amp; hold GLD</div></div>
+                <div><div class="k">Hold silver</div><div class="v">+390.44%</div><div class="s">Buy &amp; hold SLV</div></div>
+            </div>
+
+            <p>So how does one rule beat both of the metals it chooses between? It started as a <strong>pairs trade</strong>. Gold and silver are two metals that usually move together, and the classic idea is to bet on the gap between two such assets snapping back when it stretches too far<a class="sn-ref" href="#ref-3">[3]</a>. To do that you need a <em>hedge ratio</em>, the number \(\beta\) that says how many units of silver behave like one unit of gold. That ratio isn't constant, so I estimated it with a <strong>Kalman filter</strong>, which updates its guess for \(\beta\) every day as new prices arrive.</p>
+            <aside class="sidenote"><span class="n">3.</span>Gatev, Goetzmann &amp; Rouwenhorst's study of pairs trading is the standard reference for the idea and how well it worked historically.</aside>
+
+            <p>While plotting that daily \(\beta\), I noticed something more useful than the spread. The <em>direction</em> of \(\beta\) told me which metal was leading. So I stopped hedging and started rotating: hold gold when \(\beta\) trends up, hold silver when it trends down. Over the backtest this beat buying and holding either metal, and that's the strategy this post is about.</p>
+
+            <p>I'll walk through the whole thing: the data, the filter, the signal and the backtest. Then I'll stress-test my own results, because the most useful part of this project turned out to be finding out where the impressive number comes from and how fragile it is.</p>
+
+            <div class="callout quiet">
+                <p><strong>Not financial advice.</strong> This is a research write-up of a historical backtest. Past performance doesn't predict future returns, and the costs of real trading are discussed in <a href="#costs">§7</a>.</p>
+            </div>
+
+            <h2 id="gold-silver">Gold, Silver and Their Ratio</h2>
+
+            <p>The two assets are exchange-traded funds that hold physical metal. <code>GLD</code> holds gold, and one share is backed by roughly a tenth of an ounce. <code>SLV</code> holds silver, roughly one ounce per share. SLV only started trading in April 2006, so although my code asks for data from 2005, the backtest effectively begins on 28 April 2006.</p>
+
+            <p>Silver behaves like gold with the volume turned up. It is a precious metal but also an industrial one (solar panels, electronics), so it reacts more violently in both directions. Over these 20 years silver's worst peak-to-trough fall was −76%, against −46% for gold. The relationship between them is usually summarised by the <strong>gold/silver ratio</strong>: how many ounces of silver buy one ounce of gold. For the ETFs it is simply \(\text{GLD}/\text{SLV}\), which is about a tenth of the metal ratio because of the share sizes.</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <canvas id="ratio" style="height:240px"></canvas>
+                </div>
+                <figcaption><b>Figure 1</b> The GLD/SLV price ratio. When it rises, gold is outperforming silver, and when it falls, silver is winning. The dashed line is the 20-year median.</figcaption>
+            </figure>
+
+            <p>The ratio wanders a long way. Silver's boom pushed it to its low of 3.2 in April 2011, and the COVID crash pushed it to its high of 12.6 in March 2020, a fourfold range. A fixed hedge ratio would be badly wrong most of the time, which is why I reached for a filter that tracks it.</p>
+
+            <h2 id="pairs-trading">The Original Plan: Pairs Trading</h2>
+
+            <p>A pairs trade models one price as a multiple of the other:</p>
+            $$y_t = \beta_t\, x_t + \varepsilon_t, \qquad y = \text{GLD},\ x = \text{SLV}.$$
+            <p>If you are long one share of gold and short \(\beta\) shares of silver, your position is worth the <em>spread</em> \(s_t = y_t - \beta_t x_t\). When the spread is unusually wide you bet on it narrowing, and vice versa. The whole strategy rests on two things, a good estimate of \(\beta_t\) and a spread that actually mean-reverts.</p>
+
+            <p>The simplest way to estimate \(\beta\) is an ordinary least-squares regression over a rolling window, say the last 60 days. That works, but it forces a trade-off. A long window is stable but slow to notice change, and a short window reacts quickly but is noisy. The Kalman filter makes that trade-off explicit, with one knob for how fast \(\beta\) is allowed to drift and another for how noisy each observation is.</p>
+
+            <h2 id="kalman">The Kalman Filter</h2>
+
+            <h3 id="state-space">The State-Space Model</h3>
+
+            <p>The filter treats \(\beta\) as a hidden <em>state</em> that changes slowly and that we only see through noisy prices<a class="sn-ref" href="#ref-1">[1]</a>:</p>
+            $$\underbrace{\beta_t = \beta_{t-1} + w_t}_{\text{state: a random walk}}, \quad w_t \sim \mathcal{N}(0, \delta) \qquad\qquad \underbrace{y_t = \beta_t x_t + v_t}_{\text{observation}}, \quad v_t \sim \mathcal{N}(0, R).$$
+            <aside class="sidenote"><span class="n">1.</span>R. E. Kalman's 1960 paper introduced the filter. It guided the Apollo spacecraft before it ever priced an ETF.</aside>
+            <p>Here \(\delta\) is the <strong>process noise</strong>, how much \(\beta\) can wander from one day to the next, and \(R\) is the <strong>measurement noise</strong>, how much a single day's prices can be off the true relationship. Each day the filter runs two steps. It <em>predicts</em>, growing its uncertainty \(P\) because \(\beta\) may have drifted. Then it <em>updates</em>, nudging \(\beta\) towards today's evidence by an amount set by the Kalman gain \(K\):</p>
+            $$P \leftarrow P + \delta, \qquad K = \frac{P\,x_t}{x_t^2 P + R}, \qquad \hat\beta \leftarrow \hat\beta + K\,(y_t - \hat\beta x_t), \qquad P \leftarrow (1 - K x_t)\,P.$$
+            <p>The term \(y_t - \hat\beta x_t\) is the forecast error. If the filter is very unsure (large \(P\)) or the data is very clean (small \(R\)), \(K\) is large and \(\beta\) jumps towards the new evidence. If the filter is confident or the data is noisy, it barely moves. This is my implementation, a direct transcription of those four lines:</p>
+
+<pre><code class="language-python">class KalmanHedge:
+    def __init__(self, delta=1e-4, R=1e-3):
+        self.delta = delta  # process noise: how fast beta may drift
+        self.R = R          # measurement noise: how noisy each day is
+
+    def update(self, y, x):
+        n_obs = len(y)
+        betas = np.zeros(n_obs)
+        P = 1.0             # initial uncertainty
+        beta_hat = 0.0      # initial guess
+        for t in range(n_obs):
+            P = P + self.delta                      # predict
+            y_pred = beta_hat * x[t]
+            error = y[t] - y_pred                   # forecast error
+            K = P * x[t] / (x[t]**2 * P + self.R)   # Kalman gain
+            beta_hat = beta_hat + K * error         # update
+            P = (1 - K * x[t]) * P
+            betas[t] = beta_hat
+        return betas</code></pre>
+
+            <h3 id="what-beta-tracks">What β Actually Tracks</h3>
+
+            <p>When I came back to this project to write it up, I found something I hadn't noticed at the time. With my settings, \(\delta = 10^{-4}\) and \(R = 10^{-3}\), the filtered \(\beta\) is <em>almost exactly the price ratio</em> \(y_t / x_t\). Across 5,139 trading days the two differ by 0.025% on average.</p>
+
+            <p>The update equation explains why. The fraction of today's error that the filter accepts is</p>
+            $$K x_t = \frac{x_t^2 P}{x_t^2 P + R} = \frac{1}{1 + R / (x_t^2 P)}.$$
+            <p>SLV has traded between about $9 and $106, so \(x_t^2\) ranges from about 80 to over 10,000. Even a tiny \(P\) makes \(x_t^2 P\) much bigger than \(R = 0.001\), so \(K x_t \approx 1\). Then the update becomes \(\hat\beta \leftarrow \hat\beta + (y_t - \hat\beta x_t)/x_t = y_t/x_t\). The filter throws away almost all of its memory and resets \(\beta\) to today's ratio every day. My Kalman filter had quietly rediscovered the gold/silver ratio.</p>
+
+            <p>That isn't a bug, but it reframes the project. The real engine of the strategy is a moving-average signal on the gold/silver ratio, and the filter is a very elaborate way of computing a division. Try making \(R\) larger below. The filter starts to smooth, \(\beta\) lags behind the ratio, and the strategy's results change.</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <label>log₁₀ δ <input type="range" id="kDelta" min="-8" max="-1" step="0.5" value="-4"><output id="kDeltaOut">−4.0</output></label>
+                        <label>log₁₀ R <input type="range" id="kR" min="-4" max="5" step="0.5" value="-3"><output id="kROut">−3.0</output></label>
+                        <div class="chips" id="kPresets">
+                            <button data-v="2006.3,2026.8" class="on">All years</button>
+                            <button data-v="2008.5,2009.5">2008 crash</button>
+                            <button data-v="2020,2021">2020</button>
+                            <button data-v="2025.5,2026.8">2025–26</button>
+                        </div>
+                    </div>
+                    <canvas id="kalmanChart" style="height:260px"></canvas>
+                    <div class="readout" id="kalmanOut"></div>
+                </div>
+                <figcaption><b>Figure 2</b> The Kalman filter's β (red) against the plain GLD/SLV ratio (black). At my original settings (δ = 10⁻⁴, R = 10⁻³) the red line hides the black one completely. The readout re-runs the full strategy with these filter settings.</figcaption>
+            </figure>
+
+            <h2 id="rotation">From Hedge to Rotation</h2>
+
+            <h3 id="signal">The Signal</h3>
+
+            <p>The rotation rule compares a fast and a slow moving average of \(\beta\), a crossover like the ones trend followers have used for decades<a class="sn-ref" href="#ref-5">[5]</a>:</p>
+            $$\bar\beta^{\,\text{fast}}_t = \text{SMA}_6(\beta)_t, \qquad \bar\beta^{\,\text{slow}}_t = \text{SMA}_{21}\!\big(\bar\beta^{\,\text{fast}}\big)_t,$$
+            $$\text{hold} = \begin{cases} \text{GLD} & \text{if } \bar\beta^{\,\text{fast}}_t > \bar\beta^{\,\text{slow}}_t \quad (\text{ratio rising: gold leading}), \\ \text{SLV} & \text{if } \bar\beta^{\,\text{fast}}_t < \bar\beta^{\,\text{slow}}_t \quad (\text{ratio falling: silver leading}). \end{cases}$$
+            <aside class="sidenote"><span class="n">5.</span>Moskowitz, Ooi &amp; Pedersen documented this kind of "time-series momentum" across dozens of futures markets, including metals.</aside>
+            <p>Six trading days is about a week and a bit, and 21 is about a month. Because the slow average is taken of the fast one, the trend line is smoothed twice. A rising ratio means gold is beating silver, so the rule holds gold. In plain words, it holds whichever metal has been winning lately.</p>
+
+<pre><code class="language-python">strat['beta_smooth'] = strat['beta'].rolling(window=6).mean()          # fast
+strat['beta_trend']  = strat['beta_smooth'].rolling(window=21).mean()  # slow
+
+strat['signal'] = 0
+strat.loc[strat['beta_smooth'] &gt; strat['beta_trend'], 'signal'] = 1   # GLD
+strat.loc[strat['beta_smooth'] &lt; strat['beta_trend'], 'signal'] = 2   # SLV
+
+# trade tomorrow on today's signal: no look-ahead
+strat['position'] = strat['signal'].shift(1).fillna(0)</code></pre>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <div class="chips" id="sigPresets">
+                            <button data-v="2011,2012" class="on">2011</button>
+                            <button data-v="2020,2021">2020</button>
+                            <button data-v="2025.5,2026.8">2025–26</button>
+                        </div>
+                        <span class="mono" style="color:var(--muted)"><span style="color:#a8861a">■</span> holding GLD &nbsp; <span style="color:#8d8f94">■</span> holding SLV</span>
+                    </div>
+                    <canvas id="signalChart" style="height:240px"></canvas>
+                </div>
+                <figcaption><b>Figure 3</b> Fast average of β (black) against the slow trend (red, dashed). The background shows which metal the strategy holds on each day, one day after the crossing that triggered it.</figcaption>
+            </figure>
+
+            <h3 id="lookahead">Avoiding Look-Ahead Bias</h3>
+
+            <p>The line that matters most in the code is <code>shift(1)</code>. The signal for day \(t\) uses the closing prices of day \(t\), so you can only act on it from the next day. Without the shift, the backtest would trade today using today's close, which is information it couldn't have had, and the results would look far better than anything achievable. With the shift, the return on day \(t+1\) always comes from a decision made at the close of day \(t\).</p>
+
+            <h2 id="backtest">The Backtest</h2>
+
+            <p>The backtest starts with ₹10,000, puts all of it in whichever ETF the signal picks, and compounds daily returns. For the first 25 days, before the moving averages exist, it sits in cash. In the baseline there are no trading costs.</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <label>fast <input type="range" id="btFast" min="2" max="30" step="1" value="6"><output id="btFastOut">6</output></label>
+                        <label>slow <input type="range" id="btSlow" min="5" max="100" step="1" value="21"><output id="btSlowOut">21</output></label>
+                        <label>cost / switch <input type="range" id="btCost" min="0" max="50" step="1" value="0"><output id="btCostOut">0 bps</output></label>
+                    </div>
+                    <div class="controls">
+                        <div class="chips" id="btEnd">
+                            <button data-v="2026-02-12">Ends 12 Feb 2026 (my run)</button>
+                            <button data-v="last" class="on">Ends 1 Oct 2026 (latest)</button>
+                        </div>
+                        <div class="chips" id="btScale">
+                            <button data-v="lin" class="on">Linear</button>
+                            <button data-v="log">Log</button>
+                        </div>
+                        <div class="chips"><button id="btReset">Reset to 6 / 21 / 0</button></div>
+                    </div>
+                    <canvas id="equity" style="height:320px"></canvas>
+                    <div class="table-wrap" style="margin-top:12px">
+                        <table id="statsTable" style="margin-bottom:0"></table>
+                    </div>
+                </div>
+                <figcaption><b>Figure 4</b> Growth of ₹10,000 in the switcher strategy (green) against buying and holding GLD (gold, dashed) and SLV (silver, dotted). Drag the sliders to change the moving averages or add a trading cost per switch. 1 bps = 0.01%.</figcaption>
+            </figure>
+
+            <h3 id="results">Results</h3>
+
+            <p>My original run ended on 12 February 2026, which produced the chart in the project's README. Re-running the same code on a second data source gives nearly identical numbers. The small differences come from the two providers' closing prices.</p>
+
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th>Total return</th><th class="num">My run (Stooq)</th><th class="num">Replication (Yahoo)</th><th class="num">To 1 Oct 2026</th></tr></thead>
+                <tbody>
+                    <tr><td>Switcher strategy</td><td class="num"><strong>1015.9%</strong></td><td class="num">1008.1%</td><td class="num"><strong>693.9%</strong></td></tr>
+                    <tr><td>Buy &amp; hold GLD</td><td class="num">593.5%</td><td class="num">593.5%</td><td class="num">488.1%</td></tr>
+                    <tr><td>Buy &amp; hold SLV</td><td class="num">390.4%</td><td class="num">390.4%</td><td class="num">298.0%</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p>Over 20.4 years the strategy compounds at about <strong>10.7% a year</strong>, against 9.1% for gold and 7.0% for silver. It switches 275 times, so it holds each position for roughly 19 trading days. It spends a little more time in gold (54%) than in silver (46%).</p>
+
+            <p>The two end dates differ so much because of one day. On <strong>30 January 2026</strong> silver fell 28.5% in a single session, and the strategy was holding silver. The tall spike at the end of my original chart is silver's run-up into that day, and the cliff is the crash. A strategy that holds one asset at a time takes its full hit.</p>
+
+            <h2 id="stress-test">Stress-Testing the Stress Test</h2>
+
+            <p>A backtest is only a first draft. Before believing "1016%", it's worth asking what has to go right for that number to hold up. I ran three checks: costs, risk, and sensitivity to the settings.</p>
+
+            <h3 id="costs">Trading Costs</h3>
+
+            <p>Every switch means selling one ETF and buying the other, which costs brokerage, the bid-ask spread and slippage. With 275 switches, small costs compound into big ones. Set the cost slider in Figure 4 and watch:</p>
+
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th>Cost per switch</th><th class="num">Strategy total return</th><th>vs GLD (488%)</th></tr></thead>
+                <tbody>
+                    <tr><td>0 bps (baseline)</td><td class="num">693.9%</td><td>ahead</td></tr>
+                    <tr><td>5 bps (0.05%)</td><td class="num">591.8%</td><td>ahead</td></tr>
+                    <tr><td>10 bps (0.10%)</td><td class="num">502.9%</td><td>roughly level</td></tr>
+                    <tr><td>20 bps (0.20%)</td><td class="num">357.8%</td><td>behind</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p>The whole edge over gold disappears at about 10 basis points per switch. For a large investor trading these very liquid ETFs in the US, that's achievable. For a retail investor in India buying them through an overseas account, with currency conversion and higher brokerage, it probably isn't.</p>
+
+            <h3 id="risk">Risk-Adjusted Returns</h3>
+
+            <p>Higher returns don't mean much if they came from taking more risk. The <strong>Sharpe ratio</strong> measures return per unit of volatility, annualised from daily returns. Higher is better. The stats table under Figure 4 shows it live:</p>
+            <ul>
+                <li><strong>Switcher:</strong> Sharpe 0.52, worst drawdown −51.5%.</li>
+                <li><strong>Buy &amp; hold GLD:</strong> Sharpe 0.56, worst drawdown −45.6%.</li>
+                <li><strong>Buy &amp; hold SLV:</strong> Sharpe 0.37, worst drawdown −76.3%.</li>
+            </ul>
+            <p>The strategy earned more than gold by spending almost half its time in silver, which is more volatile, so per unit of risk it did slightly <em>worse</em> than simply holding gold. That doesn't make the strategy useless. Higher absolute growth is a valid goal. But it means the headline number is partly a reward for risk rather than a free lunch.</p>
+
+            <h3 id="sensitivity">Is 6 / 21 Special?</h3>
+
+            <p>I picked 6 and 21 days by looking at results, and choosing settings by looking at results is how backtests get <em>overfitted</em><a class="sn-ref" href="#ref-6">[6]</a>. A real effect shouldn't depend on a lucky combination, so the grid below re-runs the full 20-year backtest for 160 different pairs of windows:</p>
+            <aside class="sidenote"><span class="n">6.</span>Bailey &amp; López de Prado show how trying many settings inflates the best Sharpe ratio, and how to correct for it.</aside>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <span>cost / switch</span>
+                        <div class="chips" id="hmCost">
+                            <button data-v="0" class="on">0 bps</button>
+                            <button data-v="10">10 bps</button>
+                        </div>
+                        <span class="mono" style="color:var(--muted)"><span style="color:#2ca02c">■</span> beats GLD &nbsp; <span style="color:#b3261e">■</span> trails GLD</span>
+                    </div>
+                    <canvas id="heatmap" style="height:380px"></canvas>
+                    <div class="readout" id="heatOut"></div>
+                </div>
+                <figcaption><b>Figure 5</b> Total return (%) to 1 Oct 2026 for each combination of fast window (rows) and slow window (columns). The boxed cell is my 6 / 21. Hover over a cell, or tap it, to see its exact numbers.</figcaption>
+            </figure>
+
+            <p>This is the result that humbled me most. Without costs, <strong>62 of the 160 combinations</strong> beat buy-and-hold gold, which means most of them don't. The winners form two clusters. One is the top-left corner, where both windows are short and the strategy reacts within days to the ratio turning. The other is the bottom-right, where both are long and it follows slower trends. In between, most settings trail gold, and across the grid the results swing between 240% and 970%. My 6 / 21 (694%) sits on a good patch, but its neighbour 6 / 30 earns only 435%.</p>
+
+            <p>Switch the grid to 10 bps and only <strong>15 of 160</strong> still beat gold. Taken together, the honest summary is that the gold/silver ratio has shown some momentum, but the size of the edge depends heavily on the settings, and most of it lies within a trading cost or two of zero.</p>
+
+            <h2 id="extra-notes">Extra Notes</h2>
+
+            <ul>
+                <li><strong>The currency label.</strong> GLD and SLV trade in US dollars, so the backtest's numbers are in dollars. My code prints "$10,000" at the start but labels the chart "₹". The percentage returns are the same either way, but an Indian investor's rupee returns would also include the dollar's rise against the rupee over the period.</li>
+                <li><strong>The model has no intercept.</strong> \(y = \beta x\) forces the fitted line through zero, which is a big part of why \(\beta\) collapses to the ratio. Adding an intercept, \(y = \alpha + \beta x\), makes the filter track a genuine regression and would be the natural next experiment.</li>
+                <li><strong>Tuning δ and R.</strong> If the goal is a smoother β, the clean way is to estimate \(\delta\) and \(R\) from the data by maximum likelihood, rather than choosing them by hand. Figure 2 shows how much they matter.</li>
+                <li><strong>Out-of-sample testing.</strong> A stronger test would pick the windows using only, say, 2006–2015, then run them untouched on 2016–2026 (a walk-forward test).</li>
+                <li><strong>Data source.</strong> The original code reads from Stooq through <code>pandas-datareader</code>. The figures on this page use a snapshot of Yahoo Finance closing prices taken on 2 October 2026. As shown in <a href="#results">§6</a>, the two give almost identical results.</li>
+                <li>Further reading: Ernie Chan's <em>Algorithmic Trading</em><a class="sn-ref" href="#ref-2">[2]</a> has a chapter on exactly this use of the Kalman filter for pairs, and Welch &amp; Bishop's tutorial<a class="sn-ref" href="#ref-4">[4]</a> is the friendliest introduction to the filter itself.</li>
+            </ul>
+
+            <h2 id="references">References</h2>
+            <ol class="list refs">
+                <li id="ref-1">R. E. Kalman, <a href="https://doi.org/10.1115/1.3662552">"A New Approach to Linear Filtering and Prediction Problems"</a>, <em>J. Basic Engineering</em> 82(1) (1960) 35–45.</li>
+                <li id="ref-2">E. P. Chan, <em>Algorithmic Trading: Winning Strategies and Their Rationale</em>, Wiley, 2013.</li>
+                <li id="ref-3">E. Gatev, W. N. Goetzmann &amp; K. G. Rouwenhorst, <a href="https://doi.org/10.1093/rfs/hhj020">"Pairs Trading: Performance of a Relative-Value Arbitrage Rule"</a>, <em>Review of Financial Studies</em> 19(3) (2006) 797–827.</li>
+                <li id="ref-4">G. Welch &amp; G. Bishop, "An Introduction to the Kalman Filter", Technical Report TR 95-041, University of North Carolina at Chapel Hill.</li>
+                <li id="ref-5">T. J. Moskowitz, Y. H. Ooi &amp; L. H. Pedersen, <a href="https://doi.org/10.1016/j.jfineco.2011.11.003">"Time Series Momentum"</a>, <em>Journal of Financial Economics</em> 104(2) (2012) 228–250.</li>
+                <li id="ref-6">D. H. Bailey &amp; M. López de Prado, <a href="https://doi.org/10.3905/jpm.2014.40.5.094">"The Deflated Sharpe Ratio"</a>, <em>Journal of Portfolio Management</em> 40(5) (2014) 94–107.</li>
+            </ol>
+
+            <div class="tags">
+                <span>TAGS:</span>
+                <span class="t">#MATH</span><span class="t">#KALMAN FILTER</span><span class="t">#BACKTESTING</span><span class="t">#GOLD</span><span class="t">#SILVER</span>
+            </div>
+        </article>
+    </div>
+
+    <footer class="site">
+        <p>&copy; 2024 Shubham Kumar</p>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    const INK = '#1d1d1b', ACCENT = '#b3261e', MUTED = '#75736b', GRID = '#e3e0d6', CANVAS_BG = [251, 250, 246];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- Typesetting & highlighting ---------- */
+    if (window.renderMathInElement) {
+        renderMathInElement(document.getElementById('post'), {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+        });
+    }
+    if (window.hljs) hljs.highlightAll();
+
+    /* ---------- Heading numbers, anchors & table of contents ---------- */
+    const post = document.getElementById('post');
+    const heads = [...post.querySelectorAll('h2[id], h3[id]')];
+    let n2 = 0;
+    heads.forEach(h => {
+        if (h.tagName === 'H2') {
+            n2++;
+            const num = document.createElement('span');
+            num.className = 'num';
+            num.textContent = n2 + '.';
+            h.prepend(num);
+        }
+        const a = document.createElement('a');
+        a.className = 'anchor'; a.href = '#' + h.id; a.textContent = '#';
+        a.setAttribute('aria-label', 'Link to this section');
+        h.append(a);
+    });
+    document.querySelectorAll('.toc ol').forEach(ol => {
+        heads.forEach(h => {
+            const li = document.createElement('li');
+            if (h.tagName === 'H3') li.className = 'sub';
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.dataset.target = h.id;
+            a.textContent = [...h.childNodes].filter(nd => !(nd.classList && (nd.classList.contains('num') || nd.classList.contains('anchor')))).map(nd => nd.textContent).join('').trim();
+            li.append(a);
+            ol.append(li);
+        });
+    });
+    const tocLinks = [...document.querySelectorAll('.toc a[data-target]')];
+    function updateActive() {
+        let current = heads[0].id;
+        for (const h of heads) {
+            if (h.getBoundingClientRect().top < 120) current = h.id; else break;
+        }
+        tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === current));
+    }
+
+    /* ---------- Reading progress ---------- */
+    const bar = document.getElementById('progress');
+    function onScroll() {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        updateActive();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ---------- Canvas helpers ---------- */
+    function fit(c) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = c.clientWidth, h = c.clientHeight;
+        c.width = Math.max(1, Math.round(w * dpr));
+        c.height = Math.max(1, Math.round(h * dpr));
+        const ctx = c.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, w, h, dpr };
+    }
+    function whenVisible(el, fn) {
+        if (!('IntersectionObserver' in window)) { fn(); return; }
+        const io = new IntersectionObserver(es => {
+            if (es.some(e => e.isIntersecting)) { io.disconnect(); fn(); }
+        }, { rootMargin: '200px' });
+        io.observe(el);
+    }
+    function axes(ctx, x0, y0, w, h, xTicks, yTicks, xr, yr) {
+        ctx.save();
+        ctx.strokeStyle = GRID; ctx.lineWidth = 1;
+        ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillStyle = MUTED;
+        xTicks.forEach(t => {
+            const X = x0 + (t - xr[0]) / (xr[1] - xr[0]) * w;
+            ctx.beginPath(); ctx.moveTo(X, y0); ctx.lineTo(X, y0 + h); ctx.stroke();
+            ctx.textAlign = 'center'; ctx.fillText(+t.toFixed(4), X, y0 + h + 13);
+        });
+        yTicks.forEach(t => {
+            const Y = y0 + h - (t - yr[0]) / (yr[1] - yr[0]) * h;
+            ctx.beginPath(); ctx.moveTo(x0, Y); ctx.lineTo(x0 + w, Y); ctx.stroke();
+            ctx.textAlign = 'right'; ctx.fillText(+t.toFixed(4), x0 - 5, Y + 3);
+        });
+        ctx.strokeStyle = '#b8b4a8';
+        ctx.strokeRect(x0 + .5, y0 + .5, w, h);
+        ctx.restore();
+    }
+    function ticks(a, b, n) {
+        const span = b - a, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw) || raw;
+        const out = [];
+        for (let t = Math.ceil(a / step - 1e-9) * step; t <= b + 1e-9; t += step) out.push(+t.toFixed(10));
+        return out;
+    }
+
+    /* ---------- Data ---------- */
+    const D = window.GLD_SLV;
+    if (!D) return;
+    const N = D.gld.length;
+    const GLD = Float64Array.from(D.gld), SLV = Float64Array.from(D.slv);
+    const DATES = new Array(N), T = new Float64Array(N);
+    {
+        let ms = Date.parse(D.start + 'T00:00:00Z');
+        for (let i = 0; i < N; i++) {
+            if (i > 0) ms += (+D.gaps[i - 1]) * 864e5;
+            const d = new Date(ms);
+            DATES[i] = d;
+            const y = d.getUTCFullYear(), y0 = Date.UTC(y, 0, 1), y1 = Date.UTC(y + 1, 0, 1);
+            T[i] = y + (ms - y0) / (y1 - y0);
+        }
+    }
+    const RATIO = new Float64Array(N);
+    for (let i = 0; i < N; i++) RATIO[i] = GLD[i] / SLV[i];
+    const GOLD = '#a8861a', SILVER = '#8d8f94', GREEN = '#2ca02c';
+    const fmtDate = d => d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+    const idxAtT = t => { let lo = 0, hi = N - 1; while (lo < hi) { const m = (lo + hi) >> 1; if (T[m] < t) lo = m + 1; else hi = m; } return lo; };
+    const idxAtDate = iso => { const ms = Date.parse(iso + 'T00:00:00Z'); let k = 0; for (let i = 0; i < N; i++) if (DATES[i].getTime() <= ms) k = i; return k; };
+
+    /* ---------- Model ---------- */
+    function kalman(delta, R) {
+        const b = new Float64Array(N);
+        let P = 1, beta = 0;
+        for (let t = 0; t < N; t++) {
+            P += delta;
+            const x = SLV[t], K = P * x / (x * x * P + R);
+            beta += K * (GLD[t] - beta * x);
+            P = (1 - K * x) * P;
+            b[t] = beta;
+        }
+        return b;
+    }
+    function sma(a, w) {
+        const out = new Float64Array(a.length).fill(NaN);
+        let sum = 0, nan = 0;
+        for (let i = 0; i < a.length; i++) {
+            const v = a[i];
+            if (isNaN(v)) nan++; else sum += v;
+            if (i >= w) { const o = a[i - w]; if (isNaN(o)) nan--; else sum -= o; }
+            if (i >= w - 1 && nan === 0) out[i] = sum / w;
+        }
+        return out;
+    }
+    function signals(beta, fast, slow) {
+        const f = sma(beta, fast), s = sma(f, slow), sig = new Int8Array(N);
+        for (let i = 0; i < N; i++) sig[i] = (isNaN(f[i]) || isNaN(s[i])) ? 0 : f[i] > s[i] ? 1 : f[i] < s[i] ? 2 : 0;
+        return { f, s, sig };
+    }
+    function backtest(sig, costBps, iEnd) {
+        const n = iEnd + 1, cost = costBps / 1e4;
+        const eq = new Float64Array(n), eg = new Float64Array(n), es = new Float64Array(n), pos = new Int8Array(n);
+        eq[0] = eg[0] = es[0] = 1;
+        let prev = 0, switches = 0;
+        for (let t = 1; t < n; t++) {
+            const p = sig[t - 1], rg = GLD[t] / GLD[t - 1] - 1, rs = SLV[t] / SLV[t - 1] - 1;
+            let e = eq[t - 1];
+            if (p !== prev) { switches++; e *= 1 - cost; }
+            prev = p; pos[t] = p;
+            eq[t] = e * (1 + (p === 1 ? rg : p === 2 ? rs : 0));
+            eg[t] = eg[t - 1] * (1 + rg);
+            es[t] = es[t - 1] * (1 + rs);
+        }
+        return { eq, eg, es, pos, switches, n };
+    }
+    function stats(curve, n) {
+        const years = (DATES[n - 1] - DATES[0]) / (365.25 * 864e5);
+        let peak = 0, mdd = 0, m = 0, m2 = 0;
+        for (let i = 0; i < n; i++) { peak = Math.max(peak, curve[i]); mdd = Math.min(mdd, curve[i] / peak - 1); }
+        for (let i = 1; i < n; i++) { const r = curve[i] / curve[i - 1] - 1; m += r; m2 += r * r; }
+        m /= (n - 1); const sd = Math.sqrt(m2 / (n - 1) - m * m);
+        return { total: curve[n - 1] - 1, cagr: Math.pow(curve[n - 1], 1 / years) - 1, mdd, sharpe: m / sd * Math.sqrt(252) };
+    }
+    const BASE_BETA = kalman(1e-4, 1e-3);
+
+    /* ---------- Time-series chart ---------- */
+    function chart(c, o) {
+        const { ctx, w, h } = fit(c);
+        const m = { l: o.ml || 50, r: 10, t: 8, b: 22 };
+        const W = w - m.l - m.r, H = h - m.t - m.b;
+        const i0 = o.i0 || 0, i1 = o.i1 == null ? N - 1 : o.i1;
+        const tf = o.log ? Math.log10 : v => v;
+        let lo = Infinity, hi = -Infinity;
+        o.series.forEach(s => { for (let i = i0; i <= i1; i++) { const v = s.y[i]; if (isFinite(v) && (!o.log || v > 0)) { if (v < lo) lo = v; if (v > hi) hi = v; } } });
+        let a = tf(lo), b = tf(hi);
+        const pad = (b - a) * 0.06 || 1; a -= pad; b += pad;
+        if (!o.log && lo >= 0 && o.zero) a = 0;
+        const X = t => m.l + (t - T[i0]) / (T[i1] - T[i0]) * W;
+        const Y = v => m.t + H - (tf(v) - a) / (b - a) * H;
+        ctx.clearRect(0, 0, w, h);
+        if (o.bands) {
+            const p = o.bands;
+            let s = i0;
+            for (let i = i0 + 1; i <= i1 + 1; i++) {
+                if (i > i1 || p[i] !== p[s]) {
+                    const col = o.bandColors[p[s]];
+                    if (col) { ctx.fillStyle = col; ctx.fillRect(X(T[s]), m.t, Math.max(1, X(T[Math.min(i, i1)]) - X(T[s])), H); }
+                    s = i;
+                }
+            }
+        }
+        ctx.save();
+        ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillStyle = MUTED; ctx.strokeStyle = GRID; ctx.lineWidth = 1;
+        const span = T[i1] - T[i0];
+        if (span < 2.2) {
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const step = span < 1.2 ? 2 : 3;
+            for (let y = Math.floor(T[i0]); y <= Math.ceil(T[i1]); y++) for (let mo = 0; mo < 12; mo += step) {
+                const t = y + mo / 12; if (t < T[i0] || t > T[i1]) continue;
+                const Xp = X(t); ctx.beginPath(); ctx.moveTo(Xp, m.t); ctx.lineTo(Xp, m.t + H); ctx.stroke();
+                ctx.textAlign = 'center'; ctx.fillText(mo === 0 ? String(y) : months[mo], Xp, m.t + H + 13);
+            }
+        } else {
+            const step = W / span < 34 ? 4 : W / span < 60 ? 2 : 1;
+            for (let y = Math.ceil(T[i0]); y <= T[i1]; y++) {
+                if (y % step) continue;
+                const Xp = X(y); ctx.beginPath(); ctx.moveTo(Xp, m.t); ctx.lineTo(Xp, m.t + H); ctx.stroke();
+                ctx.textAlign = 'center'; ctx.fillText(String(y), Xp, m.t + H + 13);
+            }
+        }
+        let yt;
+        if (o.log) {
+            yt = [];
+            for (let k = Math.floor(a) - 1; k <= Math.ceil(b); k++) [1, 2, 5].forEach(mm => { const v = mm * Math.pow(10, k); if (tf(v) >= a && tf(v) <= b) yt.push(v); });
+            if (yt.length > 7) yt = yt.filter(v => Math.abs(Math.log10(v) % 1) < 1e-9 || Math.abs(Math.log10(v / 2) % 1) < 1e-9);
+        } else yt = ticks(a, b, 5);
+        yt.forEach(v => {
+            const Yp = Y(v); if (Yp < m.t - 1 || Yp > m.t + H + 1) return;
+            ctx.beginPath(); ctx.moveTo(m.l, Yp); ctx.lineTo(m.l + W, Yp); ctx.stroke();
+            ctx.textAlign = 'right'; ctx.fillText((o.yFmt || (x => +x.toFixed(4)))(v), m.l - 5, Yp + 3);
+        });
+        ctx.strokeStyle = '#b8b4a8'; ctx.strokeRect(m.l + .5, m.t + .5, W, H);
+        (o.hlines || []).forEach(hl => {
+            ctx.strokeStyle = hl.color; ctx.setLineDash(hl.dash || [4, 4]); ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(m.l, Y(hl.y)); ctx.lineTo(m.l + W, Y(hl.y)); ctx.stroke(); ctx.setLineDash([]);
+        });
+        ctx.restore();
+        ctx.save();
+        ctx.beginPath(); ctx.rect(m.l, m.t, W, H); ctx.clip();
+        const drawTo = o.drawTo == null ? i1 : Math.min(i1, o.drawTo);
+        o.series.forEach(s => {
+            ctx.strokeStyle = s.color; ctx.lineWidth = s.width || 1.4; ctx.globalAlpha = s.alpha == null ? 1 : s.alpha;
+            ctx.setLineDash(s.dash || []);
+            ctx.beginPath();
+            const stride = Math.max(1, Math.floor((drawTo - i0) / (W * 2)));
+            let started = false;
+            const point = i => {
+                const v = s.y[i];
+                if (!isFinite(v) || (o.log && v <= 0)) { started = false; return; }
+                const Xp = X(T[i]), Yp = Y(v);
+                started ? ctx.lineTo(Xp, Yp) : ctx.moveTo(Xp, Yp); started = true;
+            };
+            let i = i0;
+            for (; i <= drawTo; i += stride) point(i);
+            if (i - stride !== drawTo) point(drawTo);
+            ctx.stroke();
+        });
+        ctx.restore();
+        return { ctx, X, Y, m, W, H, w, h };
+    }
+
+    /* ---------- Hero: GLD & SLV rebased ---------- */
+    (function hero() {
+        const c = document.getElementById('hero');
+        const g = new Float64Array(N), s = new Float64Array(N);
+        for (let i = 0; i < N; i++) { g[i] = GLD[i] / GLD[0]; s[i] = SLV[i] / SLV[0]; }
+        const opts = {
+            log: true, ml: 40, yFmt: v => v + '×',
+            series: [{ y: s, color: SILVER, width: 1.6 }, { y: g, color: GOLD, width: 1.8 }]
+        };
+        function labels(r) {
+            const k = opts.drawTo == null ? N - 1 : opts.drawTo;
+            r.ctx.font = '600 11px "JetBrains Mono", monospace'; r.ctx.textAlign = 'right';
+            [[g, GOLD, 'GLD'], [s, SILVER, 'SLV']].forEach(([a, col, name]) => {
+                r.ctx.fillStyle = col;
+                r.ctx.fillText(name + ' ' + a[k].toFixed(1) + '×', Math.min(r.X(T[k]) + 4, r.m.l + r.W - 4), r.Y(a[k]) - 7);
+            });
+        }
+        function draw() { labels(chart(c, opts)); }
+        window.addEventListener('resize', draw);
+        if (reduceMotion) { draw(); return; }
+        const t0 = performance.now(), dur = 1800;
+        (function step(now) {
+            const p = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+            opts.drawTo = Math.max(1, Math.round(e * (N - 1)));
+            draw();
+            if (p < 1) requestAnimationFrame(step); else { opts.drawTo = null; draw(); }
+        })(t0);
+    })();
+
+    /* ---------- Figure 1: ratio ---------- */
+    (function ratioFig() {
+        const c = document.getElementById('ratio');
+        const sorted = Array.from(RATIO).sort((a, b) => a - b), median = sorted[N >> 1];
+        const draw = () => chart(c, { series: [{ y: RATIO, color: INK, width: 1.2 }], hlines: [{ y: median, color: ACCENT }], yFmt: v => v.toFixed(1) });
+        whenVisible(c, () => { draw(); window.addEventListener('resize', draw); });
+    })();
+
+    /* ---------- Figure 2: Kalman explorer ---------- */
+    (function kalmanFig() {
+        const c = document.getElementById('kalmanChart'), out = document.getElementById('kalmanOut');
+        const dS = document.getElementById('kDelta'), rS = document.getElementById('kR');
+        let win = [2006.3, 2026.8], beta = BASE_BETA, ready = false;
+        const minus = v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+        function recompute() {
+            beta = kalman(Math.pow(10, +dS.value), Math.pow(10, +rS.value));
+            document.getElementById('kDeltaOut').textContent = minus(+dS.value);
+            document.getElementById('kROut').textContent = minus(+rS.value);
+            let gap = 0, k = 0;
+            for (let i = 30; i < N; i++) { gap += Math.abs(beta[i] - RATIO[i]) / RATIO[i]; k++; }
+            const bt = backtest(signals(beta, 6, 21).sig, 0, N - 1), st = stats(bt.eq, bt.n);
+            out.innerHTML = `<span class="tag">avg gap to ratio ${(100 * gap / k).toFixed(gap / k < 0.01 ? 3 : 1)}%</span>strategy (6 / 21, no costs): ${(100 * st.total).toFixed(0)}% total · ${bt.switches} switches`;
+            draw();
+        }
+        function draw() {
+            if (!ready) return;
+            const i0 = Math.max(0, idxAtT(win[0])), i1 = Math.min(N - 1, idxAtT(win[1]));
+            chart(c, { i0, i1, yFmt: v => v.toFixed(1), series: [{ y: RATIO, color: INK, width: 2.4, alpha: 0.85 }, { y: beta, color: ACCENT, width: 1.2 }] });
+        }
+        dS.addEventListener('input', recompute); rS.addEventListener('input', recompute);
+        document.querySelectorAll('#kPresets button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#kPresets button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+            win = b.dataset.v.split(',').map(Number); draw();
+        }));
+        whenVisible(c, () => { ready = true; recompute(); window.addEventListener('resize', draw); });
+    })();
+
+    /* ---------- Figure 3: signal ---------- */
+    (function signalFig() {
+        const c = document.getElementById('signalChart');
+        const sg = signals(BASE_BETA, 6, 21), pos = new Int8Array(N);
+        for (let i = 1; i < N; i++) pos[i] = sg.sig[i - 1];
+        let win = [2011, 2012];
+        function draw() {
+            const i0 = idxAtT(win[0]), i1 = Math.min(N - 1, idxAtT(win[1]));
+            chart(c, {
+                i0, i1, yFmt: v => v.toFixed(1),
+                bands: pos, bandColors: { 1: 'rgba(201,162,39,0.16)', 2: 'rgba(141,143,148,0.20)' },
+                series: [{ y: sg.f, color: INK, width: 1.4 }, { y: sg.s, color: ACCENT, width: 1.4, dash: [5, 3] }]
+            });
+        }
+        document.querySelectorAll('#sigPresets button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#sigPresets button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+            win = b.dataset.v.split(',').map(Number); draw();
+        }));
+        whenVisible(c, () => { draw(); window.addEventListener('resize', draw); });
+    })();
+
+    /* ---------- Figure 4: equity curve + stats ---------- */
+    (function equityFig() {
+        const c = document.getElementById('equity'), table = document.getElementById('statsTable');
+        const fS = document.getElementById('btFast'), sS = document.getElementById('btSlow'), cS = document.getElementById('btCost');
+        let iEnd = N - 1, log = false, ready = false;
+        const CAP = 10000;
+        const pct = v => (v >= 0 ? '' : '−') + Math.abs(100 * v).toFixed(1) + '%';
+        function run() {
+            const f = +fS.value, s = +sS.value, cost = +cS.value;
+            document.getElementById('btFastOut').textContent = f;
+            document.getElementById('btSlowOut').textContent = s;
+            document.getElementById('btCostOut').textContent = cost + ' bps';
+            if (!ready) return;
+            const bt = backtest(signals(BASE_BETA, f, s).sig, cost, iEnd);
+            const sc = a => Float64Array.from(a, v => v * CAP);
+            const r = chart(c, {
+                i1: iEnd, log, zero: true, yFmt: v => v >= 1000 ? +(v / 1000).toFixed(1) + 'k' : String(v),
+                hlines: [{ y: CAP, color: 'rgba(29,29,27,0.35)' }],
+                series: [
+                    { y: sc(bt.es), color: SILVER, width: 1.3, dash: [2, 3] },
+                    { y: sc(bt.eg), color: GOLD, width: 1.3, dash: [6, 4], alpha: 0.85 },
+                    { y: sc(bt.eq), color: GREEN, width: 1.7 }
+                ]
+            });
+            r.ctx.font = '600 11px "JetBrains Mono", monospace'; r.ctx.textAlign = 'left';
+            [['Switcher', GREEN], ['Buy & hold GLD', GOLD], ['Buy & hold SLV', SILVER]].forEach(([t, col], k) => {
+                r.ctx.fillStyle = col; r.ctx.fillText('— ' + t, r.m.l + 10, r.m.t + 16 + k * 15);
+            });
+            const rows = [['Switcher', stats(bt.eq, bt.n), bt.switches], ['Buy & hold GLD', stats(bt.eg, bt.n), 0], ['Buy & hold SLV', stats(bt.es, bt.n), 0]];
+            table.innerHTML = `<thead><tr><th>Through ${fmtDate(DATES[iEnd])}</th><th class="num">Final value</th><th class="num">Total</th><th class="num">CAGR</th><th class="num">Max drawdown</th><th class="num">Sharpe</th><th class="num">Switches</th></tr></thead><tbody>` +
+                rows.map(([n, st, sw], k) => `<tr><td>${k === 0 ? '<strong>' + n + '</strong>' : n}</td><td class="num">₹${Math.round(CAP * (1 + st.total)).toLocaleString('en-IN')}</td><td class="num">${pct(st.total)}</td><td class="num">${pct(st.cagr)}</td><td class="num">${pct(st.mdd)}</td><td class="num">${st.sharpe.toFixed(2)}</td><td class="num">${k === 0 ? sw : '—'}</td></tr>`).join('') + '</tbody>';
+        }
+        [fS, sS, cS].forEach(el => el.addEventListener('input', run));
+        document.getElementById('btReset').addEventListener('click', () => { fS.value = 6; sS.value = 21; cS.value = 0; run(); });
+        document.querySelectorAll('#btEnd button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#btEnd button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+            iEnd = b.dataset.v === 'last' ? N - 1 : idxAtDate(b.dataset.v); run();
+        }));
+        document.querySelectorAll('#btScale button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#btScale button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+            log = b.dataset.v === 'log'; run();
+        }));
+        whenVisible(c, () => { ready = true; run(); window.addEventListener('resize', run); });
+    })();
+
+    /* ---------- Figure 5: parameter heatmap ---------- */
+    (function heatFig() {
+        const c = document.getElementById('heatmap'), out = document.getElementById('heatOut');
+        const FAST = [], SLOW = [];
+        for (let f = 2; f <= 20; f += 2) FAST.push(f);
+        for (let s = 5; s <= 80; s += 5) SLOW.push(s === 20 ? 21 : s);
+        const cache = {};
+        const gldTotal = GLD[N - 1] / GLD[0] - 1;
+        let cost = 0, grid = null, hover = null, geom = null;
+        function compute() {
+            if (cache[cost]) return cache[cost];
+            const g = FAST.map(f => SLOW.map(s => { const bt = backtest(signals(BASE_BETA, f, s).sig, cost, N - 1); return { f, s, total: bt.eq[N - 1] - 1, sw: bt.switches }; }));
+            return (cache[cost] = g);
+        }
+        function draw() {
+            grid = compute();
+            const { ctx, w, h } = fit(c);
+            const m = { l: 44, r: 8, t: 22, b: 26 };
+            const W = w - m.l - m.r, H = h - m.t - m.b, cw = W / SLOW.length, ch = H / FAST.length;
+            geom = { m, cw, ch };
+            ctx.clearRect(0, 0, w, h);
+            ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillStyle = MUTED; ctx.textAlign = 'center';
+            ctx.fillText('slow window (days) →', m.l + W / 2, h - 4);
+            SLOW.forEach((s, j) => ctx.fillText(s, m.l + (j + .5) * cw, m.t - 7));
+            ctx.textAlign = 'right';
+            FAST.forEach((f, i) => ctx.fillText(f, m.l - 6, m.t + (i + .5) * ch + 3));
+            ctx.save(); ctx.translate(11, m.t + H / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center'; ctx.fillText('fast window ↓', 0, 0); ctx.restore();
+            let beat = 0;
+            grid.forEach((row, i) => row.forEach((cell, j) => {
+                const rel = Math.log((1 + cell.total) / (1 + gldTotal)) / Math.log(2.5);
+                const t = Math.max(-1, Math.min(1, rel));
+                if (cell.total > gldTotal) beat++;
+                ctx.fillStyle = t >= 0 ? `rgba(44,160,44,${0.12 + 0.75 * t})` : `rgba(179,38,30,${0.12 + 0.75 * -t})`;
+                const x = m.l + j * cw, y = m.t + i * ch;
+                ctx.fillRect(x + 1, y + 1, cw - 2, ch - 2);
+                if (cw > 30) {
+                    ctx.fillStyle = Math.abs(t) > 0.55 ? '#fff' : INK; ctx.textAlign = 'center';
+                    ctx.fillText(Math.round(100 * cell.total), x + cw / 2, y + ch / 2 + 3);
+                }
+            }));
+            // box my original 6 / 21
+            const i6 = FAST.indexOf(6), j20 = SLOW.indexOf(21);
+            ctx.strokeStyle = INK; ctx.lineWidth = 2;
+            ctx.strokeRect(m.l + j20 * cw + 1, m.t + i6 * ch + 1, cw - 2, ch - 2);
+            if (hover) {
+                ctx.strokeStyle = ACCENT; ctx.lineWidth = 2;
+                ctx.strokeRect(m.l + hover[1] * cw + 1, m.t + hover[0] * ch + 1, cw - 2, ch - 2);
+            }
+            const total = FAST.length * SLOW.length;
+            if (hover) {
+                const cell = grid[hover[0]][hover[1]];
+                out.innerHTML = `<span class="tag${cell.total > gldTotal ? '' : ' chaos'}">fast ${cell.f} / slow ${cell.s}</span>total ${Math.round(100 * cell.total)}% vs GLD ${Math.round(100 * gldTotal)}% · ${cell.sw} switches`;
+            } else {
+                out.innerHTML = `<span class="tag">${beat} of ${total}</span>combinations beat buy &amp; hold GLD (${Math.round(100 * gldTotal)}%) at ${cost} bps per switch`;
+            }
+        }
+        function pick(e) {
+            if (!geom) return;
+            const r = c.getBoundingClientRect(), x = e.clientX - r.left - geom.m.l, y = e.clientY - r.top - geom.m.t;
+            const j = Math.floor(x / geom.cw), i = Math.floor(y / geom.ch);
+            const nh = (i >= 0 && i < FAST.length && j >= 0 && j < SLOW.length) ? [i, j] : null;
+            if (String(nh) !== String(hover)) { hover = nh; draw(); }
+        }
+        c.addEventListener('mousemove', pick);
+        c.addEventListener('click', pick);
+        c.addEventListener('mouseleave', () => { hover = null; draw(); });
+        document.querySelectorAll('#hmCost button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#hmCost button').forEach(x => x.classList.remove('on')); b.classList.add('on');
+            cost = +b.dataset.v; hover = null; draw();
+        }));
+        whenVisible(c, () => { draw(); window.addEventListener('resize', draw); });
+    })();
+})();
+</script>
+</body>
+</html>

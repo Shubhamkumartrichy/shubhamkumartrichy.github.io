@@ -224,6 +224,126 @@ body {
     padding-left: 18px;
 }
 
+/* Next Barça match (below the quote in the "From the GOAT" card) */
+.barca-next {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    background: linear-gradient(135deg, rgba(165, 0, 68, 0.08), rgba(0, 77, 152, 0.10));
+    text-align: center;
+    overflow: hidden;
+}
+
+.barca-next-label {
+    font-size: 9.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.barca-fixture {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    margin: 4px 0;
+}
+
+.barca-fixture img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.barca-vs {
+    font-size: 10px;
+    font-weight: 700;
+    color: #004d98;
+}
+
+.barca-opponent {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    max-width: 100%;
+    padding: 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.barca-meta {
+    font-size: 12px;
+    color: #555;
+}
+
+.barca-countdown {
+    font-size: 9.5px;
+    background: #a50044;
+    color: #fff;
+    border-radius: 3px;
+    padding: 0 5px;
+}
+
+.barca-countdown:empty {
+    display: none;
+}
+
+/* Backtest stats on the "Gold, Silver & a Kalman Filter" home card */
+.home-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    overflow: hidden;
+}
+
+.home-stats > div {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 12px;
+    border-right: 1px solid #eee;
+    min-width: 0;
+}
+
+.home-stats > div:last-child {
+    border-right: 0;
+}
+
+.home-stats .k {
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #777;
+}
+
+.home-stats .v {
+    font-size: 19px;
+    font-weight: 700;
+    color: #111;
+    margin-top: 2px;
+}
+
+.home-stats .s {
+    font-size: 12px;
+    color: #777;
+}
+
+.home-stats .win .v {
+    color: #2ca02c;
+}
+
+@media (max-width: 600px) {
+    .home-stats { grid-template-columns: 1fr 1fr; }
+    .home-stats > div:nth-child(2) { border-right: 0; }
+    .home-stats > div:nth-child(-n+2) { border-bottom: 1px solid #eee; }
+}
+
 /* AlphaGo Section */
 .card-content-with-image {
     display: flex;
@@ -447,6 +567,22 @@ body {
     border-color: #000;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+}
+
+/* Card themed like its post page (cream paper + dot grid) */
+.blog-card.card-paper {
+    background-color: #f5f3ec;
+    background-image: radial-gradient(#d3d0c4 1px, transparent 1.2px);
+    background-size: 22px 22px;
+    border-color: #d3d0c4;
+}
+
+.blog-card.card-paper:hover {
+    border-color: #1d1d1b;
+}
+
+.blog-card.card-paper .card-title {
+    font-family: 'Source Serif 4', Charter, Georgia, serif;
 }
 
 .blog-card .card-header {

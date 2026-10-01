@@ -147,16 +147,11 @@
                 </div>
 
                 <div class="content-card">
-                    <h3 class="card-title">From the GOAT</h3>
-                    <div class="poem-content" style="display:flex;align-items:center;">
-                        <div class="poem-image" style="flex:1;">
-                            <img src="Media/Tree.webp" alt="Tree" style="width:100%;height:100%;object-fit:cover;display:block;">
-                        </div>
-                        <div class="poem-text" style="flex:2; padding-left:18px;">
-                            <p>“I start early and I stay late, day after day, year after year. It took me 17 years and 114 days to become an overnight success.”</p>
-                            <p>~ Lionel Messi (2004)</p>
-                        </div>
+                    <div class="card-header">
+                        <span class="date">Feb 20, 2025</span>
                     </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
                 </div>
 
                 <div class="content-card">
@@ -174,30 +169,35 @@
             <div class="content-row">
                 <div class="content-card">
                     <div class="card-header">
-                        <span class="date">March 10, 2024</span>
+                        <span class="date">March 22, 2025</span>
                         <span class="category">Blog</span>
                     </div>
                     <div class="card-content-with-image">
                         <div class="text-content">
-                            <h3 class="card-title">Coming Soon...</h3>
-                            <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                            <h3 class="card-title">Bifurcation &amp; Chaos</h3>
+                            <p class="card-description">From a population of rabbits to the butterfly effect: what happens when you turn one knob in a simple equation, and why order hides inside randomness.</p>
                         </div>
                         <div class="go-board-image">
-                            <img src="Media/Game.png" alt="Go Board" class="go-board-img">
+                            <canvas id="lorenzCard" class="go-board-img" role="img" aria-label="A rotating Lorenz attractor at rho = 28"></canvas>
                         </div>
                     </div>
-                    <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                    <button class="read-more-btn" onclick="window.location.href='bifurcation-and-chaos.html'">Read More ></button>
                 </div>
 
                 <div class="content-card">
-                    <h3 class="card-title">Coming Soon...</h3>
-                    <div class="tags">
-                        <span class="tag">Project</span>
-                        <span class="tag">Baduk</span>
-                        <span class="tag">Softwares</span>
+                    <div class="card-header">
+                        <span class="date">December 20, 2025</span>
+                        <span class="category">Blog</span>
                     </div>
-                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
-                    <button class="visit-archive-btn" onclick="window.location.href='under-construction.html'">Visit Archive ></button>
+                    <h3 class="card-title">Gold, Silver &amp; a Kalman Filter</h3>
+                    <p class="card-description">Two metals, one rule: always ride the one that's winning.</p>
+                    <div class="home-stats" role="group" aria-label="Backtest results, 28 Apr 2006 to 12 Feb 2026">
+                        <div><span class="k">Period</span><span class="v">19.8 yrs</span><span class="s">2006 – 2026</span></div>
+                        <div class="win"><span class="k">Our strategy</span><span class="v">+1015.9%</span><span class="s">₹10k → ₹111.6k</span></div>
+                        <div><span class="k">Hold gold</span><span class="v">+593.5%</span><span class="s">GLD</span></div>
+                        <div><span class="k">Hold silver</span><span class="v">+390.4%</span><span class="s">SLV</span></div>
+                    </div>
+                    <button class="read-more-btn" onclick="window.location.href='gold-silver-kalman.html'">Read More ></button>
                 </div>
             </div>
 
@@ -227,11 +227,22 @@
                 </div>
 
                 <div class="content-card">
-                    <div class="card-header">
-                        <span class="date">Feb 20, 2025</span>
+                    <h3 class="card-title">From the GOAT</h3>
+                    <div class="poem-text" style="padding-left:0;">
+                        <p>“I start early and I stay late, day after day, year after year. It took me 17 years and 114 days to become an overnight success.”</p>
+                        <p>~ Lionel Messi (2004)</p>
                     </div>
-                    <h3 class="card-title">Coming Soon...</h3>
-                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                    <div class="barca-next" id="barcaNext" aria-live="polite">
+                        <span class="barca-next-label">Barça Next Match</span>
+                        <div class="barca-fixture">
+                            <img id="barcaHomeBadge" alt="" width="34" height="34">
+                            <span class="barca-vs">vs</span>
+                            <img id="barcaAwayBadge" alt="" width="34" height="34">
+                        </div>
+                        <span id="barcaAway" class="barca-opponent">…</span>
+                        <span id="barcaMeta" class="barca-meta">Loading…</span>
+                        <span id="barcaCountdown" class="barca-countdown"></span>
+                    </div>
                 </div>
 
                 <div class="content-card">
@@ -432,6 +443,144 @@ document.addEventListener("DOMContentLoaded", function() {
         updatePoster(musicIdx);
     }, 1500);
 });
+</script>
+<script>
+// Rotating Lorenz attractor (rho = 28) for the Bifurcation & Chaos card
+(function () {
+    const c = document.getElementById('lorenzCard');
+    if (!c) return;
+    const SIG = 10, BET = 8 / 3, RHO = 28, H = 0.005;
+    const s = [1, 1, 1];
+    const f = (x, y, z) => [SIG * (y - x), x * (RHO - z) - y, x * y - BET * z];
+    function step() {
+        const [x, y, z] = s;
+        const k1 = f(x, y, z);
+        const k2 = f(x + H / 2 * k1[0], y + H / 2 * k1[1], z + H / 2 * k1[2]);
+        const k3 = f(x + H / 2 * k2[0], y + H / 2 * k2[1], z + H / 2 * k2[2]);
+        const k4 = f(x + H * k3[0], y + H * k3[1], z + H * k3[2]);
+        for (let i = 0; i < 3; i++) s[i] += H / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    }
+    for (let i = 0; i < 400; i++) step();
+    const N = 9000, pts = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) { pts[3 * i] = s[0]; pts[3 * i + 1] = s[1]; pts[3 * i + 2] = s[2]; step(); }
+
+    let ctx, w, h, theta = -0.6, head = 0, running = true;
+    function fit() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = c.clientWidth; h = c.clientHeight;
+        c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+        ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        const sc = Math.min(w / 56, h / 46), cx = w / 2, cy = h / 2 + 26 * sc;
+        const ct = Math.cos(theta), st = Math.sin(theta), CH = 120;
+        ctx.lineWidth = 0.6;
+        for (let a = 0; a < N - 1; a += CH) {
+            const e = Math.min(N - 1, a + CH);
+            let d = 0;
+            ctx.beginPath();
+            for (let i = a; i <= e; i++) {
+                const x = pts[3 * i], y = pts[3 * i + 1], z = pts[3 * i + 2];
+                d += x * st + y * ct;
+                const X = cx + (x * ct - y * st) * sc, Y = cy - z * sc;
+                i === a ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y);
+            }
+            const t = Math.max(0, Math.min(1, (d / (e - a + 1) + 22) / 44));
+            ctx.strokeStyle = 'rgba(29,29,27,' + (0.2 + 0.6 * t) + ')';
+            ctx.stroke();
+        }
+        const x = pts[3 * head], y = pts[3 * head + 1], z = pts[3 * head + 2];
+        ctx.fillStyle = '#b3261e';
+        ctx.beginPath(); ctx.arc(cx + (x * ct - y * st) * sc, cy - z * sc, 2.5, 0, 7); ctx.fill();
+    }
+    function frame() {
+        if (!running) return;
+        theta += 0.004; head = (head + 3) % N;
+        draw();
+        requestAnimationFrame(frame);
+    }
+    fit(); draw();
+    window.addEventListener('resize', () => { fit(); draw(); });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(es => {
+            const vis = es[0].isIntersecting;
+            if (vis && !running) { running = true; requestAnimationFrame(frame); }
+            else if (!vis) running = false;
+        }).observe(c);
+    }
+    requestAnimationFrame(frame);
+})();
+</script>
+<script>
+// Next FC Barcelona fixture (TheSportsDB free API, cached for an hour)
+(function () {
+    const box = document.getElementById('barcaNext');
+    if (!box) return;
+    const API = 'https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=133739';
+    const KEY = 'barcaNextCache';
+    const $ = id => document.getElementById(id);
+    let kickoff = null;
+
+    function readCache() {
+        try {
+            const c = JSON.parse(localStorage.getItem(KEY));
+            if (c && Date.now() - c.t < 3600e3) return c.ev;
+        } catch (e) {}
+        return null;
+    }
+    function writeCache(ev) {
+        try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), ev })); } catch (e) {}
+    }
+    function badge(img, url, name) {
+        if (!url) { img.style.visibility = 'hidden'; return; }
+        img.src = url + '/small';
+        img.alt = name + ' crest';
+        img.onerror = () => { img.onerror = null; img.src = url; };
+    }
+    function tick() {
+        if (!kickoff) return;
+        const ms = kickoff - Date.now();
+        const el = $('barcaCountdown');
+        if (ms <= 0) { el.textContent = ms > -2 * 3600e3 ? 'Live now' : ''; return; }
+        const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+        el.textContent = d > 0 ? `in ${d}d ${h}h` : `in ${h}h ${m}m`;
+    }
+    function render(ev) {
+        if (!ev) { fail(); return; }
+        const home = /barcelona/i.test(ev.strHomeTeam);
+        $('barcaAway').textContent = (home ? 'vs ' + ev.strAwayTeam : '@ ' + ev.strHomeTeam);
+        badge($('barcaHomeBadge'), ev.strHomeTeamBadge, ev.strHomeTeam);
+        badge($('barcaAwayBadge'), ev.strAwayTeamBadge, ev.strAwayTeam);
+        kickoff = ev.strTimestamp ? new Date(ev.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(ev.strTimestamp) ? '' : 'Z')) : null;
+        const when = kickoff && !isNaN(kickoff)
+            ? kickoff.toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : (ev.dateEvent || '');
+        $('barcaMeta').textContent = when;
+        box.classList.add('ready');
+        tick();
+        setInterval(tick, 60e3);
+    }
+    function fail() {
+        $('barcaMeta').textContent = 'Visca el Barça!';
+        $('barcaAway').textContent = 'No fixture';
+        $('barcaAwayBadge').style.visibility = 'hidden';
+        $('barcaHomeBadge').style.visibility = 'hidden';
+    }
+
+    const cached = readCache();
+    if (cached) { render(cached); return; }
+    fetch(API)
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(d => {
+            const now = Date.now() - 2 * 3600e3;
+            const ev = (d.events || []).find(e => !e.strTimestamp || new Date(e.strTimestamp + 'Z') > now) || null;
+            if (ev) writeCache(ev);
+            render(ev);
+        })
+        .catch(fail);
+})();
 </script>
 </body>
 </html>
