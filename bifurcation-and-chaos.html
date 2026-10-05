@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bifurcation &amp; Chaos | Shubham</title>
+    <meta name="description" content="From rabbits to the butterfly effect: a walk through bifurcation theory, the logistic map, Feigenbaum's constant and the Lorenz system, with live, interactive figures.">
+    <link rel="icon" type="image/png" href="Media/Favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <style>
+        :root {
+            --paper: #f5f3ec;
+            --paper-2: #efede5;
+            --canvas: #fbfaf6;
+            --ink: #1d1d1b;
+            --ink-2: #3a3a36;
+            --muted: #75736b;
+            --rule: #d8d5ca;
+            --accent: #b3261e;
+            --link: #2a5db0;
+            --code-bg: #ecebe3;
+            --serif: 'Source Serif 4', Charter, 'Iowan Old Style', Georgia, serif;
+            --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+        body {
+            background-color: var(--paper);
+            background-image: radial-gradient(#d3d0c4 1px, transparent 1.2px);
+            background-size: 22px 22px;
+            color: var(--ink);
+            font-family: var(--serif);
+            font-size: 18px;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: var(--link); text-underline-offset: 2px; }
+
+        /* Reading progress */
+        .progress { position: fixed; top: 0; left: 0; height: 3px; width: 0; background: var(--ink); z-index: 50; }
+
+        .page { max-width: 1240px; margin: 0 auto; padding: 0 16px; }
+
+        /* Top bar */
+        .topbar {
+            display: flex; align-items: stretch; justify-content: space-between;
+            border-bottom: 1px solid var(--ink);
+            font-family: var(--mono); font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase;
+        }
+        .topbar nav { display: flex; }
+        .topbar a { color: var(--ink); text-decoration: none; padding: 10px 16px; border-right: 1px solid var(--rule); }
+        .topbar a:hover { background: var(--paper-2); }
+        .topbar a.active { background: var(--ink); color: var(--paper); }
+        .topbar .brand { font-family: var(--serif); text-transform: none; letter-spacing: 0; font-size: 16px; font-weight: 600; padding-left: 8px; }
+        .topbar .stamp { align-self: center; color: var(--muted); padding: 0 8px; }
+
+        .crumbs {
+            margin-top: 14px; display: flex; justify-content: space-between; align-items: center;
+            border-top: 2px solid var(--ink); border-bottom: 1px solid var(--ink);
+            padding: 6px 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
+        }
+        .crumbs b { color: var(--ink); }
+        .crumbs a { color: var(--ink); }
+
+        /* Post head */
+        .post-head { text-align: center; max-width: 720px; margin: 40px auto 0; }
+        .chip { display: inline-block; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; padding: 3px 8px; }
+        .post-head h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.15; margin: 14px 0 12px; font-weight: 700; letter-spacing: -.01em; }
+        .post-head .sub { font-style: italic; color: var(--ink-2); font-size: 19px; }
+        .post-head .meta { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+        .post-head hr { border: 0; border-top: 1px solid var(--ink); margin: 22px auto 0; max-width: 660px; }
+
+        .hero { max-width: 900px; margin: 26px auto 0; text-align: center; }
+        .hero canvas { width: 100%; height: 400px; display: block; }
+        .hero figcaption { font-style: italic; color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+        /* 3-column layout */
+        .layout {
+            display: grid; grid-template-columns: 210px minmax(0, 660px) minmax(0, 1fr);
+            gap: 0 52px; margin-top: 40px;
+        }
+        .toc { position: sticky; top: 24px; align-self: start; max-height: calc(100vh - 48px); overflow-y: auto; padding-right: 4px; }
+        .toc h4 { font-family: var(--mono); font-size: 10.5px; letter-spacing: .2em; font-weight: 600; padding-bottom: 8px; border-bottom: 1px solid var(--ink); margin-bottom: 10px; }
+        .toc ol { list-style: none; }
+        .toc li a { display: block; position: relative; text-decoration: none; color: var(--ink-2); font-size: 14px; line-height: 1.35; padding: 4px 0 4px 14px; }
+        .toc li.sub a { padding-left: 28px; font-size: 13.5px; color: var(--muted); }
+        .toc li.sub a::before { content: '›'; position: absolute; left: 0; color: var(--muted); }
+        .toc li a:hover { color: var(--ink); }
+        .toc li a.active { color: var(--ink); font-weight: 600; }
+        .toc li a.active::after { content: ''; position: absolute; left: 3px; top: 50%; width: 5px; height: 5px; margin-top: -2.5px; border-radius: 50%; background: var(--accent); }
+        .toc li.sub a.active::after { left: 17px; }
+        .toc-mobile { display: none; }
+
+        /* Article */
+        article { position: relative; min-width: 0; }
+        article p { text-align: justify; hyphens: auto; margin-bottom: 18px; }
+        article h2 { font-size: 26px; line-height: 1.3; margin: 52px 0 16px; font-weight: 700; }
+        article h2:first-child { margin-top: 8px; }
+        article h2 .num { color: var(--accent); margin-right: 10px; font-family: var(--mono); font-weight: 600; font-size: 22px; }
+        article h3 { font-size: 20px; font-style: italic; font-weight: 400; margin: 34px 0 12px; }
+        article h3 .anchor, article h2 .anchor { color: #8aa7d6; text-decoration: none; margin-left: 6px; font-style: normal; font-size: .85em; opacity: 0; transition: opacity .15s; }
+        article h3:hover .anchor, article h2:hover .anchor { opacity: 1; }
+        article ul, article ol.list { margin: 0 0 18px 24px; }
+        article ul li { list-style: square; margin-bottom: 6px; padding-left: 4px; }
+        article ul li::marker { color: var(--ink-2); font-size: .8em; }
+        article ol.list li { margin-bottom: 6px; padding-left: 4px; }
+        article strong { font-weight: 600; }
+        code, .mono { font-family: var(--mono); font-size: .82em; font-variant-ligatures: none; }
+        .nc { text-transform: none; letter-spacing: 0; }
+        p code, li code, td code { color: var(--accent); background: transparent; }
+        pre { background: var(--code-bg); border: 1px solid var(--rule); border-radius: 3px; padding: 16px 18px; overflow-x: auto; margin: 0 0 22px; line-height: 1.55; }
+        pre code.hljs { background: transparent; padding: 0; font-size: 13.2px; }
+        .katex { font-size: 1.04em; }
+        .katex-display { margin: 18px 0 22px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+
+        .callout { border-left: 3px solid var(--accent); background: var(--paper-2); padding: 14px 18px; margin: 0 0 26px; font-size: 16.5px; }
+        .callout p { margin: 0; text-align: left; }
+        .callout p + p { margin-top: 8px; }
+        .callout.quiet { border-left-color: var(--ink); }
+
+        blockquote { border-left: 2px solid var(--ink); padding: 2px 0 2px 18px; margin: 0 0 22px; font-style: italic; color: var(--ink-2); }
+
+        table { width: 100%; border-collapse: collapse; margin: 4px 0 24px; font-size: 15px; }
+        th, td { padding: 7px 10px; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+        th { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--ink); }
+        td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+        .table-wrap { overflow-x: auto; }
+
+        /* Figures */
+        figure.fig { margin: 8px 0 28px; }
+        .fig-body { background: var(--canvas); border: 1px solid var(--rule); border-radius: 3px; padding: 14px; }
+        .fig canvas { width: 100%; display: block; }
+        figure.fig figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+        figure.fig figcaption b { color: var(--ink); font-family: var(--serif); font-weight: 600; margin-right: 6px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .panel-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+        .bif-svg { width: 100%; height: auto; display: block; }
+        .bif-svg .axis { stroke: #b8b4a8; stroke-width: 1; }
+        .bif-svg .st { stroke: var(--ink); stroke-width: 2; fill: none; }
+        .bif-svg .un { stroke: var(--ink); stroke-width: 1.6; fill: none; stroke-dasharray: 4 4; }
+        .bif-svg .cyc { stroke: var(--accent); stroke-width: 2; fill: none; }
+        .bif-svg text { font-family: var(--mono); font-size: 9px; fill: var(--muted); }
+
+        .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-bottom: 12px; font-family: var(--mono); font-size: 12px; }
+        .controls label { display: flex; align-items: center; gap: 8px; }
+        .controls input[type=range] { width: 170px; accent-color: var(--accent); }
+        .controls output { min-width: 46px; font-weight: 600; color: var(--ink); }
+        .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chips button {
+            font-family: var(--mono); font-size: 11px; padding: 3px 9px; background: transparent; color: var(--ink);
+            border: 1px solid var(--ink); border-radius: 2px; cursor: pointer;
+        }
+        .chips button:hover { background: var(--paper-2); }
+        .chips button.on { background: var(--ink); color: var(--paper); }
+        .readout { font-family: var(--mono); font-size: 12px; margin-top: 10px; color: var(--ink-2); min-height: 1.5em; }
+        .readout .tag { background: var(--ink); color: var(--paper); padding: 1px 6px; margin-right: 8px; }
+        .readout .tag.chaos { background: var(--accent); }
+
+        /* Sidenotes */
+        .sn-ref { color: var(--link); font-family: var(--mono); font-size: 11px; vertical-align: super; line-height: 0; margin-left: 2px; text-decoration: none; }
+        .sidenote {
+            float: right; clear: right; width: 230px; margin-right: -282px; margin-top: 4px;
+            font-family: var(--serif); font-size: 13.5px; line-height: 1.45; color: var(--muted); text-align: left;
+        }
+        .sidenote .n { color: var(--accent); font-family: var(--mono); font-weight: 600; font-size: 11px; margin-right: 4px; }
+
+        .tags { border-top: 1px solid var(--ink); margin-top: 40px; padding-top: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; color: var(--muted); display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+        .tags span.t { border: 1px solid var(--rule); padding: 2px 8px; color: var(--ink-2); background: var(--canvas); }
+
+        .refs { font-size: 15px; }
+        .refs li { margin-bottom: 8px; text-align: left; }
+
+        footer.site { text-align: center; padding: 40px 0 30px; color: var(--muted); font-size: 14px; }
+
+        /* Responsive */
+        @media (max-width: 1220px) {
+            .layout { grid-template-columns: 200px minmax(0, 1fr); gap: 0 44px; }
+            .sidenote {
+                float: none; display: block; width: auto; margin: 0 0 18px; padding: 8px 12px;
+                border-left: 2px solid var(--rule); background: rgba(255,255,255,.35);
+            }
+        }
+        @media (max-width: 900px) {
+            .layout { grid-template-columns: minmax(0, 1fr); }
+            .toc { display: none; }
+            .toc-mobile { display: block; margin-bottom: 28px; border: 1px solid var(--ink); background: var(--canvas); }
+            .toc-mobile summary { cursor: pointer; padding: 10px 14px; font-family: var(--mono); font-size: 11px; letter-spacing: .2em; font-weight: 600; }
+            .toc-mobile .toc { display: block; position: static; max-height: none; padding: 0 14px 10px; }
+            .toc-mobile .toc h4 { display: none; }
+            .topbar .stamp { display: none; }
+            .hero canvas { height: 300px; }
+        }
+        @media (max-width: 640px) {
+            body { font-size: 17px; }
+            article p { text-align: left; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .grid-4 { grid-template-columns: 1fr 1fr; }
+            .topbar a { padding: 10px 10px; }
+            .crumbs .date { display: none; }
+            .controls input[type=range] { width: 130px; }
+        }
+        @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    </style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="page">
+
+    <header class="topbar">
+        <nav>
+            <a href="index.html" class="brand">Shubham Kumar</a>
+            <a href="index.html">Home</a>
+            <a href="blog.html" class="active">Blog</a>
+        </nav>
+        <span class="stamp">ẋ = f(x, r)</span>
+    </header>
+
+    <div class="crumbs">
+        <span><b>Blog</b> / Math</span>
+        <span class="date">2025.03.22</span>
+        <a href="blog.html">← All entries</a>
+    </div>
+
+    <div class="post-head">
+        <span class="chip">MATH</span>
+        <h1>Bifurcation &amp; Chaos</h1>
+        <p class="sub">From a population of rabbits to the butterfly effect: what happens when you turn one knob in a simple equation.</p>
+        <div class="meta">Mar 22, 2025 · 18 min read</div>
+        <hr>
+    </div>
+
+    <figure class="hero">
+        <canvas id="hero" aria-label="A rotating Lorenz attractor"></canvas>
+        <figcaption>The Lorenz attractor at ρ = 28, integrated live in your browser</figcaption>
+    </figure>
+
+    <div class="layout">
+        <aside class="toc" id="toc" aria-label="Table of contents">
+            <h4>TABLE OF CONTENTS</h4>
+            <ol></ol>
+        </aside>
+
+        <article id="post">
+            <details class="toc-mobile"><summary>TABLE OF CONTENTS</summary><div class="toc"><ol></ol></div></details>
+
+            <div class="callout">
+                <p><strong>Info.</strong> This blog grew out of my B.Tech project, <em>Bifurcation Analysis of a System of ODEs</em>, supervised by <a href="https://www.rgipt.ac.in/faculty/Faculty/FacultyProfile?Sid=BoctsjAIby8%3D">Dr.&nbsp;Soniya Dhama</a>. My original code is in Python, and you can find it on <a href="https://github.com/Shubhamkumartrichy/Bifurcation-Analysis-of-a-System-of-ODEs">GitHub</a>. Every figure below is recomputed live in your browser, so drag the sliders and click the diagrams.</p>
+            </div>
+
+            <h2 id="context">A Little Bit of Context</h2>
+
+            <p>It started with one equation. A single line of algebra, something you could put on a postcard, produces stable populations, oscillations, and pure randomness, depending on one number. Once I saw that, I went down the rabbit hole of chaos theory and haven't really come out.</p>
+
+            <p>That number is the <em>parameter</em>, and the study of how a system's long-run behaviour changes as you slowly turn a parameter is called <strong>bifurcation theory</strong>. For my B.Tech project I picked two classic examples. The first is the logistic map, a discrete model that is the gentlest introduction to the subject. The second is the Lorenz system, a set of three ODEs that is the textbook example of chaos in continuous time. This post is the long-form version of that project. I also put in what I learned reading around it, and I fix a few mistakes I made along the way.</p>
+
+            <p>I assume you are comfortable with derivatives and know what an ODE is. You don't need a dynamical systems course.</p>
+
+            <h2 id="what-is-bifurcation">What is a Bifurcation?</h2>
+
+            <p>Take any system whose state evolves by a rule that depends on a parameter \(r\). The rule can be continuous (a flow) or discrete (a map):</p>
+            $$\dot{x} = f(x, r) \qquad \text{or} \qquad x_{n+1} = f(x_n, r).$$
+            <p>For most values of \(r\), nudging \(r\) slightly changes the picture only slightly. Equilibria drift a little and orbits stretch a little. At special values, the picture changes <em>qualitatively</em>. Equilibria are born or destroyed, stability is exchanged, or an oscillation appears out of nowhere. Those special values are <strong>bifurcation points</strong>. A bifurcation is a change in the <em>type</em> of behaviour, not just its size.</p>
+
+            <h3 id="fixed-points">Fixed Points &amp; Stability</h3>
+
+            <p>The first thing to find in any system is where it can sit still. For a flow these are points with \(f(x^*) = 0\). For a map they are points with \(f(x^*) = x^*\). Then we ask whether a small perturbation dies out or grows. Linearising around \(x^*\) answers it:</p>
+            $$\underbrace{|f'(x^*)| < 1}_{\text{map: stable}} \qquad\qquad \underbrace{f'(x^*) < 0}_{\text{flow: stable}}$$
+            <p>In higher dimensions \(f'\) becomes the Jacobian matrix \(J\), and the question becomes where its eigenvalues lie. For a flow, a fixed point is stable when every eigenvalue has a negative real part. For a map, it is stable when every eigenvalue lies inside the unit circle. A bifurcation happens exactly when an eigenvalue <em>crosses that boundary</em> as \(r\) changes. How it crosses decides which bifurcation you get.</p>
+
+            <h3 id="classic-bifurcations">The Classic Bifurcations</h3>
+
+            <p>Near a bifurcation point, almost any system looks like one of a handful of simple "normal forms". Learn these and you can recognise the local behaviour of most systems you'll meet.</p>
+
+            <figure class="fig">
+                <div class="fig-body grid-4">
+                    <div>
+                        <div class="panel-label">Saddle-node</div>
+                        <svg class="bif-svg" viewBox="0 0 180 120" role="img" aria-label="Saddle-node bifurcation diagram">
+                            <line class="axis" x1="10" y1="60" x2="172" y2="60"/><line class="axis" x1="110" y1="8" x2="110" y2="112"/>
+                            <path class="un" d="M110,60 Q110,37.5 40,15"/><path class="st" d="M110,60 Q110,82.5 40,105"/>
+                            <text x="160" y="72">r</text><text x="114" y="16">x*</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-label">Transcritical</div>
+                        <svg class="bif-svg" viewBox="0 0 180 120" role="img" aria-label="Transcritical bifurcation diagram">
+                            <line class="axis" x1="10" y1="60" x2="172" y2="60"/><line class="axis" x1="90" y1="8" x2="90" y2="112"/>
+                            <path class="st" d="M20,60 L90,60"/><path class="un" d="M90,60 L165,60"/>
+                            <path class="un" d="M25,102 L90,60"/><path class="st" d="M90,60 L158,16"/>
+                            <text x="160" y="72">r</text><text x="94" y="16">x*</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-label">Pitchfork</div>
+                        <svg class="bif-svg" viewBox="0 0 180 120" role="img" aria-label="Supercritical pitchfork bifurcation diagram">
+                            <line class="axis" x1="10" y1="60" x2="172" y2="60"/><line class="axis" x1="60" y1="8" x2="60" y2="112"/>
+                            <path class="st" d="M12,60 L60,60"/><path class="un" d="M60,60 L168,60"/>
+                            <path class="st" d="M60,60 Q60,37.5 130,15 L160,8"/><path class="st" d="M60,60 Q60,82.5 130,105 L160,112"/>
+                            <text x="160" y="72">r</text><text x="64" y="16">x*</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-label">Hopf</div>
+                        <svg class="bif-svg" viewBox="0 0 180 120" role="img" aria-label="Supercritical Hopf bifurcation diagram">
+                            <line class="axis" x1="10" y1="60" x2="172" y2="60"/><line class="axis" x1="60" y1="8" x2="60" y2="112"/>
+                            <path class="st" d="M12,60 L60,60"/><path class="un" d="M60,60 L168,60"/>
+                            <path class="cyc" d="M60,60 Q60,37.5 130,15 L160,8"/><path class="cyc" d="M60,60 Q60,82.5 130,105 L160,112"/>
+                            <ellipse cx="116" cy="60" rx="7" ry="40" fill="none" stroke="#b3261e" stroke-width="1" stroke-dasharray="2 3"/>
+                            <text x="160" y="72">μ</text><text x="64" y="16">amp</text>
+                        </svg>
+                    </div>
+                </div>
+                <figcaption><b>Figure 1</b> Bifurcation diagrams of the normal forms. Solid lines are stable, dashed are unstable. In the Hopf panel the red branches are the amplitude of a newborn limit cycle, not fixed points.</figcaption>
+            </figure>
+
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th>Type</th><th>Normal form</th><th>What happens</th><th>Eigenvalue picture</th></tr></thead>
+                <tbody>
+                    <tr><td>Saddle-node</td><td>\(\dot x = r + x^2\)</td><td>Two fixed points collide and annihilate</td><td>real λ through 0 (map: +1)</td></tr>
+                    <tr><td>Transcritical</td><td>\(\dot x = rx - x^2\)</td><td>Two fixed points cross and swap stability</td><td>real λ through 0 (map: +1)</td></tr>
+                    <tr><td>Pitchfork</td><td>\(\dot x = rx - x^3\)</td><td>One fixed point splits into three (symmetric systems)</td><td>real λ through 0 (map: +1)</td></tr>
+                    <tr><td>Hopf</td><td>\(\dot\rho = \mu\rho - \rho^3,\ \dot\theta = \omega\)</td><td>Fixed point loses stability, a limit cycle is born</td><td>complex pair crosses the imaginary axis</td></tr>
+                    <tr><td>Period-doubling</td><td>\(x_{n+1} = -(1+\mu)x_n + x_n^3\)</td><td>Orbit of period \(p\) gives way to one of period \(2p\)</td><td>map multiplier through −1</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p>Each of these also comes in a <em>supercritical</em> flavour and a <em>subcritical</em> flavour. In the supercritical case (shown above) the new state is born stable and grows smoothly from zero, so the transition is gentle. In the subcritical case the new branches are unstable and the system <em>jumps</em> somewhere far away. Keep that in mind, because the Lorenz system's Hopf bifurcation turns out to be the dangerous, subcritical kind.</p>
+            <aside class="sidenote"><span class="n">1.</span>Strogatz's <em>Nonlinear Dynamics and Chaos</em>, chapters 3 and 8, is the best place to see each normal form worked out with pictures.</aside>
+
+            <h2 id="logistic-map">The Logistic Map</h2>
+
+            <h3 id="rabbits">Rabbits &amp; Feedback</h3>
+
+            <p>Suppose \(x_n\) is the rabbit population this year and we want next year's. The simplest guess is \(x_{n+1} = r\,x_n\), where \(r\) is the growth rate. With \(r = 2\) the population doubles every year, which is exponential growth, and no real population does that forever. The environment pushes back, so we add a constraint:</p>
+            $$x_{n+1} = r\,x_n\,(1 - x_n).$$
+            <p>Here \(x\) is a <em>fraction</em> of the theoretical maximum, so it lives in \([0, 1]\). As \(x\) approaches 1, the factor \((1-x)\) approaches 0 and chokes the growth. This is a negative feedback loop. The bigger the population gets this year, the smaller it tends to be the next. Plot \(x_{n+1}\) against \(x_n\) and you get an inverted parabola, a single hump. That's the whole model. Robert May popularised it in 1976 as a warning that even simple ecological models can behave in wildly complicated ways<a class="sn-ref" href="#ref-2">[2]</a>.</p>
+            <aside class="sidenote"><span class="n">2.</span>R. M. May, "Simple mathematical models with very complicated dynamics", <em>Nature</em> 261 (1976). It is still very readable.</aside>
+
+            <p>Try \(r = 2.6\) starting from \(x_0 = 0.4\):</p>
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th>n</th><th class="num">0</th><th class="num">1</th><th class="num">2</th><th class="num">3</th><th class="num">4</th><th class="num">5</th><th class="num">6</th><th class="num">7</th><th class="num">∞</th></tr></thead>
+                <tbody><tr><td>\(x_n\)</td><td class="num">0.4</td><td class="num">0.6240</td><td class="num">0.6100</td><td class="num">0.6185</td><td class="num">0.6135</td><td class="num">0.6165</td><td class="num">0.6147</td><td class="num">0.6158</td><td class="num">0.6154</td></tr></tbody>
+            </table>
+            </div>
+            <p>The population wobbles and then <em>settles</em>. This matches what we see in the wild, where populations often hold steady as long as births and deaths balance. Change \(x_0\) and the first few years change, but the long-run value stays the same. That long-run value is a <strong>stable fixed point</strong>.</p>
+
+            <h3 id="rabbit-island">The Rabbit Island</h3>
+
+            <p>Before doing any algebra, here's the whole story told with rabbits. Picture a small island with plenty of grass, no foxes, and a colony of rabbits. Every spring we count them. The only thing we're allowed to change is \(r\), how fast they breed. Each value of \(r\) below links to the explorer further down, so you can watch that year-by-year count yourself.</p>
+
+            <ol class="list">
+                <li><strong>Too slow to survive</strong> (<a href="#period-doubling" data-set-r="0.8">r = 0.8</a>). Each generation leaves fewer babies than there were parents. The count shrinks every spring until the island is empty. However many rabbits we start with, the colony goes extinct.</li>
+                <li><strong>A quiet balance</strong> (<a href="#period-doubling" data-set-r="2.6">r = 2.6</a>). The colony grows, overshoots a little, and settles at about 61% of what the island can hold. Births and deaths balance and every spring's count is the same. Start with 10 rabbits or 1,000 and you still end up there. This is what we usually picture when we think of nature in balance.</li>
+                <li><strong>Boom and bust</strong> (<a href="#period-doubling" data-set-r="3.2">r = 3.2</a>). Now they breed so fast that a good year eats the island bare. The next spring there are fewer rabbits, the grass grows back, and the year after that the colony booms again. The count flips between a high value and a low one forever. The colony never settles, but it is perfectly regular, with a two-year cycle.</li>
+                <li><strong>A four-year rhythm</strong> (<a href="#period-doubling" data-set-r="3.5">r = 3.5</a>). Breed a little faster and the boom-bust cycle itself splits. Now there's a big boom, a crash, a smaller boom and a deeper crash, and then the pattern repeats. A bit faster still and you get 8 years, then 16, then 32, with each new split arriving sooner than the last.</li>
+                <li><strong>No pattern at all</strong> (<a href="#period-doubling" data-set-r="3.9">r = 3.9</a>). Past about \(r = 3.57\) the springs never repeat. One year there are lots of rabbits, the next almost none, then a middling year, with no rhythm you could ever learn. Nothing random is happening, though. The same rule produces every year from the one before. If two rangers started counting from colonies that differed by a single rabbit, their records would agree for a few years and then have nothing to do with each other.</li>
+                <li><strong>Order returns, briefly</strong> (<a href="#period-doubling" data-set-r="3.83">r = 3.83</a>). In the middle of the chaos there's a narrow band of breeding rates where the colony locks into a clean three-year cycle again. Nudge \(r\) slightly and it dissolves back into chaos.</li>
+            </ol>
+
+            <p>That's the entire plot of this post. The island never changed, the rule never changed, and no randomness was added. We only turned one knob. Every change in behaviour along the way is a <strong>bifurcation</strong>, and the last stage is <strong>chaos</strong>. The rest of the post explains <em>why</em> each change happens and where it happens.</p>
+
+            <div class="callout quiet">
+                <p><strong>Is this real?</strong> Real rabbits have foxes, winters and diseases, so no wild colony follows this exact rule. Boom-and-bust cycles are real, though. A famous example comes from the Hudson's Bay Company fur-trapping records, which show snowshoe hare numbers in Canada rising and crashing roughly every ten years for more than a century. In the 1990s, experiments on lab colonies of flour beetles changed one demographic parameter by hand. The researchers watched the populations move from a steady state to cycles and then to chaotic swings, just as the models predicted.</p>
+            </div>
+
+            <h3 id="fixed-points-by-hand">Fixed Points by Hand</h3>
+
+            <p>Setting \(x^* = r x^* (1 - x^*)\) gives two fixed points, \(x^* = 0\) (extinction) and \(x^* = 1 - 1/r\). Their stability comes from \(f'(x) = r(1 - 2x)\):</p>
+            $$f'(0) = r, \qquad f'\!\left(1 - \tfrac{1}{r}\right) = 2 - r.$$
+            <p>So extinction is stable when \(r < 1\). The positive equilibrium is stable when \(|2 - r| < 1\), that is \(1 < r < 3\). At \(r = 1\) the two fixed points pass through each other and swap stability, which is a textbook <strong>transcritical</strong> bifurcation. For \(r = 2.6\) we get \(1 - 1/2.6 = 0.6154\), exactly the value the table converged to.</p>
+
+            <p>At \(r = 3\) the multiplier \(2 - r\) hits \(-1\). By the table in the last section, that's the signature of a <strong>period-doubling</strong> bifurcation. Past \(r = 3\), the population stops settling on one value and instead oscillates between two:</p>
+            $$x_\pm = \frac{(r+1) \pm \sqrt{(r-3)(r+1)}}{2r}, \qquad \text{stable for } 3 < r < 1 + \sqrt 6 \approx 3.449.$$
+
+            <h3 id="period-doubling">Period Doubling</h3>
+
+            <p>One year the population is high, the next it's low, and then the cycle repeats. That kind of boom-and-bust cycle is observed in real animal populations too. Push \(r\) higher and each branch splits again, giving a 4-year cycle, then 8, 16, 32 and on. The splits arrive faster and faster until, around \(r \approx 3.5699\), the period becomes infinite. The population never repeats. Play with it:</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <label>r <input type="range" id="rSlider" min="0" max="4" step="0.001" value="3.2"><output id="rOut">3.200</output></label>
+                        <label>x₀ <input type="range" id="x0Slider" min="0.01" max="0.99" step="0.01" value="0.4"><output id="x0Out">0.40</output></label>
+                        <div class="chips" id="rPresets">
+                            <button data-r="2.6">2.6</button><button data-r="3.2">3.2</button><button data-r="3.5">3.5</button><button data-r="3.56">3.56</button><button data-r="3.7">3.7</button><button data-r="3.83">3.83</button><button data-r="4">4.0</button>
+                        </div>
+                    </div>
+                    <div class="grid-2">
+                        <div><div class="panel-label">Cobweb · x<sub>n+1</sub> vs x<sub>n</sub></div><canvas id="cobweb" style="height:280px"></canvas></div>
+                        <div><div class="panel-label">Time series · x<sub>n</sub> vs n</div><canvas id="series" style="height:280px"></canvas></div>
+                    </div>
+                    <div class="readout" id="readout"></div>
+                </div>
+                <figcaption><b>Figure 2</b> The logistic explorer. In the cobweb, go up to the parabola, across to the diagonal, and repeat. A fixed point is where the cobweb spirals in, and a cycle is where it traces a closed box. The readout iterates 4,000 steps to classify the long-run behaviour and estimate the Lyapunov exponent λ (see <a href="#lyapunov">§5</a>).</figcaption>
+            </figure>
+
+            <p>At \(r = 3.7\) or \(4\) the series looks like noise, but nothing random is going on. Every value follows exactly from the one before it. This is <strong>deterministic chaos</strong>. The randomness is convincing enough that Ulam and von Neumann suggested the \(r = 4\) map as a random number generator back in 1947. The catch is that if you know the exact initial condition you can reproduce every value, which makes them <em>pseudo</em>-random.</p>
+
+            <h3 id="bifurcation-diagram">The Bifurcation Diagram</h3>
+
+            <p>To see every value of \(r\) at once, iterate the map for a long time, throw away the transient, and plot the values the orbit keeps visiting against \(r\). This is my BTP code, lightly tidied:</p>
+
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+def logistic_map(r, x):
+    return r * x * (1 - x)
+
+r_values   = np.linspace(0, 4, 1000)   # 1000 values of r, all iterated at once
+iterations = 1000                      # total iterations per r
+last       = 100                       # only keep the last 100 (post-transient)
+
+x = 1e-5 * np.ones(len(r_values))      # same tiny initial population for every r
+results = []
+
+for i in range(iterations):
+    x = logistic_map(r_values, x)      # vectorised: one step for all r
+    if i &gt;= iterations - last:
+        results.append(np.copy(x))
+
+results    = np.array(results).flatten()
+r_repeated = np.tile(r_values, last)
+
+plt.figure(figsize=(12, 6))
+plt.plot(r_repeated, results, ',k', alpha=0.25)   # ',' = pixel markers
+plt.title("Bifurcation Diagram of the Logistic Map")
+plt.xlabel("Growth Rate (r)")
+plt.ylabel("Population (x)")
+plt.grid(alpha=0.3)
+plt.show()</code></pre>
+
+            <p>Here is the same computation in JavaScript, done per pixel column so it stays sharp at any zoom. <strong>Click anywhere on it</strong> to send that \(r\) to the explorer above.</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <div class="chips" id="bifPresets">
+                            <button data-v="0,4,0,1">Full range 0–4</button>
+                            <button data-v="2.8,4,0,1" class="on">Road to chaos 2.8–4</button>
+                            <button data-v="3.82,3.86,0,1">Period-3 window</button>
+                            <button data-v="3.841,3.857,0.44,0.56">Zoom inside the window</button>
+                        </div>
+                    </div>
+                    <canvas id="bif" style="height:380px; cursor:crosshair"></canvas>
+                </div>
+                <figcaption><b>Figure 3</b> Bifurcation diagram of the logistic map. Darker means the orbit visits that value more often. The red line marks the explorer's current r.</figcaption>
+            </figure>
+
+            <p>Read it left to right. You see a single branch (fixed point), a fork at \(r = 3\) (period 2), forks on forks (4, 8, 16, …), then a dark cloud where chaos begins. The equilibrium curve rising from \(r = 1\) is the \(1 - 1/r\) we computed by hand.</p>
+
+            <h3 id="windows">Windows of Order</h3>
+
+            <p>Just when you'd expect chaos from here on, order returns. Inside the cloud there are clean white <em>windows</em> of periodic behaviour. The biggest opens at \(r = 1 + \sqrt 8 \approx 3.8284\) with a stable <strong>period-3</strong> cycle. It is born in a saddle-node (tangent) bifurcation. That window then period-doubles to 6, 12, 24, … and dissolves back into chaos. Click "Zoom inside the window" above and you'll see a miniature copy of the whole diagram. The large-scale structure repeats on smaller and smaller scales. The diagram is a <strong>fractal</strong>.</p>
+
+            <p>Period 3 is special. A theorem by Li and Yorke, titled <em>Period Three Implies Chaos</em><a class="sn-ref" href="#ref-4">[4]</a>, says that a continuous map of an interval with a period-3 orbit has orbits of <em>every</em> period, plus uncountably many orbits that are never periodic. (Sharkovskii had proved the "every period" part even earlier.) So the logistic map contains cycles of length 37, 50, 1052, whatever you like, if you pick the right \(r\).</p>
+            <aside class="sidenote"><span class="n">4.</span>T.-Y. Li &amp; J. A. Yorke, <em>Amer. Math. Monthly</em> 82 (1975). This paper is where the word "chaos" entered mathematics.</aside>
+
+            <h2 id="feigenbaum">Feigenbaum's Constant</h2>
+
+            <p>In the mid-1970s the physicist Mitchell Feigenbaum computed where the period-doublings happen, famously on a pocket calculator. He then divided the width of each bifurcation interval by the width of the next one<a class="sn-ref" href="#ref-3">[3]</a>:</p>
+            $$\delta = \lim_{n\to\infty} \frac{r_n - r_{n-1}}{r_{n+1} - r_n} = 4.669\,201\,609\ldots$$
+
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th>n</th><th>Period born</th><th class="num">r<sub>n</sub></th><th class="num">Ratio of gaps</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>2</td><td class="num">3.000000</td><td class="num">—</td></tr>
+                    <tr><td>2</td><td>4</td><td class="num">3.449490</td><td class="num">—</td></tr>
+                    <tr><td>3</td><td>8</td><td class="num">3.544090</td><td class="num">4.7515</td></tr>
+                    <tr><td>4</td><td>16</td><td class="num">3.564407</td><td class="num">4.6562</td></tr>
+                    <tr><td>5</td><td>32</td><td class="num">3.568759</td><td class="num">4.6684</td></tr>
+                    <tr><td>∞</td><td>chaos</td><td class="num">3.569946</td><td class="num">→ 4.6692</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p>The bifurcations come faster and faster, but the ratio between successive gaps closes in on a fixed number. It doesn't match any other known constant, so it seems to be a new fundamental constant of mathematics. A second constant, \(\alpha \approx 2.5029\), describes how the widths of the forks shrink.</p>
+            <aside class="sidenote"><span class="n">3.</span>M. J. Feigenbaum, "Quantitative universality for a class of nonlinear transformations", <em>J. Stat. Phys.</em> 19 (1978).</aside>
+
+            <h3 id="universality">Universality</h3>
+
+            <p>What's even crazier is that \(\delta\) has nothing to do with the logistic map in particular. Take <em>any</em> map with a single smooth hump, for example \(x_{n+1} = r\sin(\pi x_n)\), and iterate it. You'll see the same cascade of period-doublings, and the ratio will converge to the same 4.669. That's why it shows up in real experiments that have nothing to do with rabbits:</p>
+            <ul>
+                <li><strong>Convection in a fluid.</strong> Libchaber's experiments on a fluid heated from below, around 1980, saw period-doubling in the temperature oscillations. The measured ratios came out close to Feigenbaum's number.</li>
+                <li><strong>Dripping faucets.</strong> Open the tap slightly more and the drops start coming in pairs, then in fours, and eventually chaotically, all just by adjusting the flow rate.</li>
+                <li><strong>Our eyes and flickering lights.</strong> Above a certain flicker rate, responses in the visual system lock to every <em>other</em> flash, which is period doubling in neurons.</li>
+                <li>Electronic circuits, lasers, heart cells, and the firing of neurons in your brain.</li>
+            </ul>
+
+            <h3 id="mandelbrot">The Mandelbrot Connection</h3>
+
+            <p>Arguably the most famous fractal is the Mandelbrot set, built from \(z_{n+1} = z_n^2 + c\). The plot twist is that the logistic bifurcation diagram is <em>part</em> of the Mandelbrot set. The substitution \(z = r\left(\tfrac12 - x\right)\) turns the logistic map exactly into</p>
+            $$z_{n+1} = z_n^2 + c, \qquad c = \frac{r}{2} - \frac{r^2}{4}.$$
+            <p>As \(r\) runs from 1 to 4, \(c\) runs along the real axis from \(\tfrac14\) to \(-2\). The fork at \(r = 3\) lands at \(c = -0.75\), exactly where the main cardioid meets the period-2 bulb. The period-3 window lands at \(c = -1.75\), on the tiny "mini-Mandelbrot" sitting on the real axis. The bulbs along the axis <em>are</em> the period-doublings, seen from a different angle.</p>
+
+            <h2 id="chaos">Chaos &amp; the Butterfly Effect</h2>
+
+            <h3 id="lorenz-story">Lorenz's Rounding Error</h3>
+
+            <p>In 1961 the meteorologist Edward Lorenz was running a 12-variable weather model on a Royal McBee computer. He wanted to look at one run again, so he restarted it from the middle, typing in a value from a printout. The printout showed <code>0.506</code>, but the machine stored <code>0.506127</code>. The difference was about one part in four thousand. He went for a coffee, came back, and the new forecast had diverged completely from the old one<a class="sn-ref" href="#ref-6">[6]</a>.</p>
+
+            <p>This is <strong>sensitive dependence on initial conditions</strong> (SDIC), and it became famous through the title of his 1972 talk: <em>"Does the flap of a butterfly's wings in Brazil set off a tornado in Texas?"</em> The same thing happens in the logistic map. The figure below runs it twice, once from Lorenz's \(0.506127\) and once from his rounded \(0.506\):</p>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <span>initial gap δ₀</span>
+                        <div class="chips" id="gapPresets">
+                            <button data-d="1.27e-4" class="on">1.27×10⁻⁴ (Lorenz)</button>
+                            <button data-d="1e-7">10⁻⁷</button>
+                            <button data-d="1e-10">10⁻¹⁰</button>
+                            <button data-d="1e-13">10⁻¹³</button>
+                        </div>
+                    </div>
+                    <canvas id="diverge" style="height:240px"></canvas>
+                    <div class="readout" id="divergeOut"></div>
+                </div>
+                <figcaption><b>Figure 4</b> Two runs of the logistic map at r = 3.9. Black starts from x₀ = 0.506 and red starts from x₀ + δ₀. Each 1000× improvement in precision buys only a handful of extra steps of predictability.</figcaption>
+            </figure>
+
+            <p>That last point is the real lesson. Making your measurement a thousand times more accurate doesn't buy a thousand times more forecast. It buys a fixed number of extra steps. This is why weather forecasts beyond about two weeks are hopeless no matter how big the supercomputer is.</p>
+
+            <h3 id="lyapunov">Lyapunov Exponents</h3>
+
+            <p>We can measure SDIC. If a tiny gap grows like \(\delta_n \approx \delta_0\, e^{\lambda n}\), then \(\lambda\) is the <strong>Lyapunov exponent</strong>. For a 1-D map, the chain rule turns the growth of the gap into a product of slopes, so</p>
+            $$\lambda = \lim_{n\to\infty} \frac1n \sum_{i=0}^{n-1} \ln\big|f'(x_i)\big| = \lim_{n\to\infty} \frac1n \sum_{i=0}^{n-1} \ln\big|r(1 - 2x_i)\big|.$$
+            <p>\(\lambda < 0\) means nearby orbits converge, so the motion is a stable fixed point or cycle. \(\lambda > 0\) means they separate exponentially, which is chaos. The time \(1/\lambda\) is the "Lyapunov time", the horizon beyond which prediction fails. For \(r = 4\) one can show \(\lambda = \ln 2\) exactly, so every iteration loses one bit of information about the starting point. The readout under Figure 2 computes \(\lambda\) live, so try \(r = 3.83\) (window, \(\lambda < 0\)) against \(r = 3.9\) (chaos, \(\lambda > 0\)).</p>
+
+            <div class="callout quiet">
+                <p><strong>Chaos, defined.</strong> Aperiodic long-term behaviour, in a deterministic system, that shows sensitive dependence on initial conditions. All three parts matter. Noise isn't chaos, and neither is merely complicated periodic motion.</p>
+            </div>
+
+            <h2 id="lorenz">The Lorenz System</h2>
+
+            <p>In 1963 Lorenz cut a model of convection, a fluid heated from below, down to three ODEs<a class="sn-ref" href="#ref-5">[5]</a>:</p>
+            $$\begin{aligned} \dot x &= \sigma (y - x), \\ \dot y &= x(\rho - z) - y, \\ \dot z &= xy - \beta z. \end{aligned}$$
+            <aside class="sidenote"><span class="n">5.</span>E. N. Lorenz, "Deterministic Nonperiodic Flow", <em>J. Atmos. Sci.</em> 20 (1963), one of the most cited papers in all of physics.</aside>
+            <p>Roughly, \(x\) is the speed of the convective roll, \(y\) is the temperature difference between rising and falling fluid, and \(z\) is the distortion of the vertical temperature profile. \(\sigma\) is the Prandtl number, \(\beta\) is a geometric factor, and \(\rho\) is the Rayleigh number, which measures how hard we heat the fluid. I keep Lorenz's classic \(\sigma = 10,\ \beta = 8/3\) and use \(\rho\) as the bifurcation parameter. One more useful fact is that \(\nabla\!\cdot\! f = -(\sigma + 1 + \beta) \approx -13.7 < 0\). Volumes in phase space shrink, so all trajectories end up on a set of zero volume, the <em>attractor</em>.</p>
+
+            <h3 id="lorenz-equilibria">Equilibria &amp; Stability</h3>
+
+            <p>The origin is always an equilibrium, meaning no convection. For \(\rho > 1\) two more appear, the steady clockwise and anticlockwise rolls:</p>
+            $$C^\pm = \Big(\pm\sqrt{\beta(\rho - 1)},\ \pm\sqrt{\beta(\rho - 1)},\ \rho - 1\Big).$$
+            <p>The Jacobian at the origin has eigenvalues \(-\beta\) and \(\tfrac12\big[-(\sigma+1) \pm \sqrt{(\sigma+1)^2 + 4\sigma(\rho - 1)}\big]\). One of them turns positive exactly at \(\rho = 1\), which is a <strong>pitchfork</strong> bifurcation (the system is symmetric under \((x,y) \to (-x,-y)\)). Working out the characteristic polynomial at \(C^\pm\) shows that a complex pair crosses the imaginary axis at</p>
+            $$\rho_H = \frac{\sigma(\sigma + \beta + 3)}{\sigma - \beta - 1} = \frac{470}{19} \approx 24.74,$$
+            <p>which is a <strong>Hopf</strong> bifurcation. Unlike the gentle picture in Figure 1, this one is <em>subcritical</em>. The unstable limit cycles shrink onto \(C^\pm\) and swallow them, so there's no small stable oscillation to fall back on, and the trajectory has nowhere to go but the strange attractor.</p>
+
+            <div class="table-wrap">
+            <table>
+                <thead><tr><th class="num"><span class="nc">ρ</span></th><th>What happens (<span class="nc">σ</span> = 10, <span class="nc">β</span> = 8/3)</th></tr></thead>
+                <tbody>
+                    <tr><td class="num">0 – 1</td><td>Origin is globally stable. Heat is conducted, nothing moves.</td></tr>
+                    <tr><td class="num">1</td><td>Pitchfork. The origin goes unstable and the steady rolls \(C^\pm\) are born stable.</td></tr>
+                    <tr><td class="num">≈ 1.35</td><td>Approach to \(C^\pm\) becomes a decaying spiral (eigenvalues turn complex).</td></tr>
+                    <tr><td class="num">≈ 13.93</td><td>Homoclinic explosion. Unstable cycles and <em>transient</em> chaos appear, but trajectories still settle on \(C^\pm\).</td></tr>
+                    <tr><td class="num">≈ 24.06</td><td>A strange attractor appears and coexists with the stable \(C^\pm\) (bistability).</td></tr>
+                    <tr><td class="num">≈ 24.74</td><td>Subcritical Hopf at \(\rho_H\). \(C^\pm\) lose stability and only chaos remains.</td></tr>
+                    <tr><td class="num">28</td><td>Lorenz's classic chaotic butterfly.</td></tr>
+                    <tr><td class="num">≫ 28</td><td>Chaos interrupted by periodic windows (e.g. near ρ ≈ 100, 145, 166). For very large ρ (≈ 313 and beyond) the motion settles onto a stable periodic orbit.</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3 id="simulating-lorenz">Simulating the Attractor</h3>
+
+            <p>My BTP code integrates the system with SciPy's <code>solve_ivp</code> for three values of \(\rho\):</p>
+
+<pre><code class="language-python">import numpy as np
+from scipy.integrate import solve_ivp
+import matplotlib.pyplot as plt
+
+def lorenz(t, state, sigma, beta, rho):
+    x, y, z = state
+    return [sigma * (y - x),
+            x * (rho - z) - y,
+            x * y - beta * z]
+
+sigma, beta = 10.0, 8.0 / 3.0
+initial_state = [1.0, 1.0, 1.0]
+t_span = (0, 50)
+t_eval = np.linspace(*t_span, 10000)
+
+for rho in [10, 28, 50]:
+    sol = solve_ivp(lorenz, t_span, initial_state, t_eval=t_eval,
+                    args=(sigma, beta, rho), rtol=1e-9, atol=1e-9)
+    x, y, z = sol.y
+
+    ax = plt.figure(figsize=(10, 6)).add_subplot(projection="3d")
+    ax.plot(x, y, z, lw=0.5)
+    ax.set_title(f"Lorenz System (rho={rho})")
+    ax.set_xlabel("X"); ax.set_ylabel("Y"); ax.set_zlabel("Z")
+    plt.show()</code></pre>
+
+            <figure class="fig">
+                <div class="fig-body grid-3">
+                    <div><div class="panel-label"><span class="nc">ρ</span> = 10 · spiral to C⁺</div><canvas id="lz10" style="height:220px"></canvas></div>
+                    <div><div class="panel-label"><span class="nc">ρ</span> = 28 · strange attractor</div><canvas id="lz28" style="height:220px"></canvas></div>
+                    <div><div class="panel-label"><span class="nc">ρ</span> = 50 · wilder chaos</div><canvas id="lz50" style="height:220px"></canvas></div>
+                </div>
+                <figcaption><b>Figure 5</b> The output of the code above, from (1, 1, 1) over t ∈ [0, 50], drawn here with a 4th-order Runge–Kutta integrator in JavaScript. The red dot is the final state.</figcaption>
+            </figure>
+
+            <p>At \(\rho = 10\) the trajectory spirals into one of the steady rolls. At \(\rho = 28\) it never settles. It loops around one lobe a few times, jumps unpredictably to the other, and traces the famous butterfly without ever crossing itself or repeating. That's the <em>strange attractor</em>, a fractal object with dimension ≈ 2.06, more than a surface but less than a solid.</p>
+
+            <h3 id="lorenz-bifurcation">A Bifurcation Diagram for Lorenz</h3>
+
+            <p>Turning a flow into a bifurcation diagram needs one extra idea. In my original BTP code I plotted the last 500 samples of \(z(t)\) for each \(\rho\). That works, but it smears the whole range of \(z\) into a vertical line whenever there is any oscillation, so periodic and chaotic motion look alike. A better trick, which Lorenz himself used, is to record only the <strong>successive local maxima</strong> of \(z(t)\). This turns the flow into a map. A periodic orbit then gives a few dots, chaos gives a cloud, and a fixed point gives a single point at \(z = \rho - 1\).</p>
+
+<pre><code class="language-python">from scipy.signal import argrelmax
+
+rhos, peaks = [], []
+for rho in np.linspace(0, 50, 600):
+    sol = solve_ivp(lorenz, (0, 80), [1.0, 1.0, 1.0], args=(sigma, beta, rho),
+                    t_eval=np.linspace(40, 80, 16000),   # discard t &lt; 40 as transient
+                    rtol=1e-9, atol=1e-9)
+    z = sol.y[2]
+    zmax = z[argrelmax(z)[0]]
+    if len(zmax) == 0:            # no oscillation left: we sat on a fixed point
+        zmax = [z[-1]]
+    rhos.extend([rho] * len(zmax))
+    peaks.extend(zmax)
+
+plt.scatter(rhos, peaks, s=0.3, c="k")
+plt.xlabel("rho"); plt.ylabel("successive maxima of z")</code></pre>
+
+            <figure class="fig">
+                <div class="fig-body">
+                    <div class="controls">
+                        <div class="chips" id="lzPresets">
+                            <button data-v="0,50" class="on">ρ ∈ [0, 50]</button>
+                            <button data-v="0,250">ρ ∈ [0, 250]</button>
+                        </div>
+                        <span id="lzStatus" class="mono" style="color:var(--muted)"></span>
+                    </div>
+                    <canvas id="lzbif" style="height:360px"></canvas>
+                </div>
+                <figcaption><b>Figure 6</b> Successive maxima of z(t) after the transient, for each ρ. The branch z = ρ − 1 is the steady roll C<sup>±</sup>. The chaotic band switches on at the Hopf point ρ<sub>H</sub> ≈ 24.74 (computed on page load, about a second).</figcaption>
+            </figure>
+
+            <p>The picture tells the story in the table. A flat line at zero for \(\rho < 1\) is the pitchfork. Next comes the rising line \(z = \rho - 1\), the steady rolls. Then the cloud erupts near \(\rho \approx 24\). Switch to \([0, 250]\) and you'll find the white windows of periodic behaviour inside the chaos, the continuous-time cousins of the period-3 window in the logistic map.</p>
+
+            <h2 id="in-the-wild">Bifurcations in the Wild</h2>
+
+            <p>Once you know the shapes, you start seeing them everywhere<a class="sn-ref" href="#ref-7">[7]</a>.</p>
+            <ul>
+                <li><strong>Physical systems:</strong> fluid convection and turbulence, climate tipping points, lasers switching to self-pulsing, chaotic electronic circuits.</li>
+                <li><strong>Biological systems:</strong> population cycles and predator–prey oscillations, neurons firing (a Hopf bifurcation from rest to spiking), circadian rhythms, heart arrhythmias.</li>
+                <li><strong>Chemistry:</strong> the Belousov–Zhabotinsky reaction, a chemical clock that oscillates between colours.</li>
+                <li><strong>Engineering:</strong> buckling beams (pitchforks), flutter in aircraft wings (Hopf), voltage collapse in power grids (saddle-node), and stability margins in control systems.</li>
+            </ul>
+            <aside class="sidenote"><span class="n">7.</span>S. M. Farris &amp; M. S. Hamdi, "Bifurcation Theory: A Review", <em>RJCM</em> 17(2), 2023. It has a long survey of applications across physics, biology, chemistry, medicine and geography.</aside>
+
+            <h3 id="whales">Hopf Bifurcation in Whale Populations</h3>
+
+            <p>One paper I read for the project shows how far these ideas stretch<a class="sn-ref" href="#ref-8">[8]</a>. Liu, Wu and Zhang study an <em>age-structured</em> model of baleen whales, where \(u(t, a)\) is the density of whales of age \(a\) at time \(t\):</p>
+            $$\partial_t u + \partial_a u = -\mu u, \qquad u(t, 0) = \frac{\beta_0 \int_0^\infty \beta(a) u\, da}{1 + \alpha\left(\int_0^\infty \beta(a) u\, da\right)^3}.$$
+            <aside class="sidenote"><span class="n">8.</span>Z. Liu, Y. Wu, X. Zhang, "Existence of periodic wave trains for an age-structured model with diffusion", <em>DCDS-B</em> 26(12), 2021.</aside>
+            <p>Births follow a generalised Beverton–Holt law, so newborns saturate at high adult density. Whales only reproduce once they are older than a juvenile period \(\tau\). That \(\tau\) is the bifurcation parameter. After rescaling, the linearisation around the positive equilibrium reduces to a <em>delay</em>-type characteristic equation:</p>
+            $$\zeta + p_0 + q_0 e^{-\tau\zeta} = 0, \qquad p_0 = \mu,\quad q_0 = \frac{\mu(2\beta_0 R - 3)}{\beta_0 R}.$$
+            <p>The method is exactly the recipe from <a href="#fixed-points">§2</a>. You look for a purely imaginary root \(\zeta = i\omega\), which needs \(\beta_0 R > 3\). That gives \(\omega_0 = \sqrt{q_0^2 - p_0^2}\) and a critical \(\tau_0 = \tfrac{1}{\omega_0}\arccos(-p_0/q_0)\). Then you check the transversality condition \(\tfrac{d}{d\tau}\mathrm{Re}\,\zeta > 0\), which says the roots really do cross the axis. With their numbers (\(\mu = 0.2,\ \beta_0 = 4,\ R = 1\)) you get \(q_0 = 0.25\), \(\omega_0 = 0.15\) and \(\tau_0 \approx 16.65\). When the juvenile period is short (\(\tau = 10\)) the whale population settles down. When it is long (\(\tau = 20\)) the population oscillates forever. Long maturation delays destabilise populations, a Hopf bifurcation with a real ecological meaning. With spatial diffusion added, those oscillations become <strong>periodic wave trains</strong> travelling through space.</p>
+
+            <h2 id="extra-notes">Extra Notes</h2>
+
+            <ul>
+                <li><strong>Tolerances matter.</strong> <code>solve_ivp</code> defaults to <code>rtol=1e-3</code>. For a chaotic system the integration error is itself a small perturbation that grows exponentially, so after a few Lyapunov times the trajectory you plot isn't <em>the</em> trajectory. Statistical features like the shape of the attractor survive, but individual paths don't. Use tight tolerances (or a symplectic or high-order method) when it matters.</li>
+                <li><strong>Transients.</strong> My first Lorenz bifurcation code started every \(\rho\) from \((1,1,1)\) and kept only \(t \in [47.5, 50]\). Close to \(\rho_H\), convergence is very slow (the eigenvalues have nearly zero real part), so the diagram shows fuzzy branches that are really just slow decay. Longer transients sharpen it.</li>
+                <li><strong>Bistability.</strong> For \(24.06 < \rho < 24.74\), whether you see chaos or a steady roll depends on the initial condition. Sweeping \(\rho\) up versus down (continuing from the last state) shows hysteresis, the fingerprint of a subcritical bifurcation.</li>
+                <li><code>from mpl_toolkits.mplot3d import Axes3D</code> isn't needed on modern Matplotlib (≥ 3.2). <code>add_subplot(projection="3d")</code> just works.</li>
+                <li>A correction to something I read: the review paper attributes <em>"Period Three Implies Chaos"</em> to Feigenbaum. It is actually by Li and Yorke (1975). Feigenbaum's 1978 paper is the one about universality and δ.</li>
+                <li>In my BTP report I called the Lorenz transition a "butterfly bifurcation". That isn't a standard term. More precisely, the attractor appears through a homoclinic explosion (ρ ≈ 13.93) and a crisis (ρ ≈ 24.06), and the steady states die in a subcritical Hopf (ρ ≈ 24.74).</li>
+                <li>All the Python scripts from this post, along with my BTP report, are in the <a href="https://github.com/Shubhamkumartrichy/Bifurcation-Analysis-of-a-System-of-ODEs">project repository on GitHub</a>.</li>
+                <li>If you want to go further: Strogatz<a class="sn-ref" href="#ref-1">[1]</a> chapters 9–10 cover exactly this material, and James Gleick's <em>Chaos</em><a class="sn-ref" href="#ref-6">[6]</a> tells the human story behind it.</li>
+            </ul>
+
+            <h2 id="references">References</h2>
+            <ol class="list refs">
+                <li id="ref-1">S. H. Strogatz, <em>Nonlinear Dynamics and Chaos</em>, Westview Press, 1994.</li>
+                <li id="ref-2">R. M. May, <a href="https://doi.org/10.1038/261459a0">"Simple mathematical models with very complicated dynamics"</a>, <em>Nature</em> 261 (1976) 459–467.</li>
+                <li id="ref-3">M. J. Feigenbaum, <a href="https://doi.org/10.1007/BF01020332">"Quantitative universality for a class of nonlinear transformations"</a>, <em>J. Stat. Phys.</em> 19 (1978) 25–52.</li>
+                <li id="ref-4">T.-Y. Li &amp; J. A. Yorke, "Period Three Implies Chaos", <em>Amer. Math. Monthly</em> 82 (1975) 985–992.</li>
+                <li id="ref-5">E. N. Lorenz, "Deterministic Nonperiodic Flow", <em>J. Atmos. Sci.</em> 20 (1963) 130–141.</li>
+                <li id="ref-6">J. Gleick, <em>Chaos: Making a New Science</em>, Viking, 1987.</li>
+                <li id="ref-7">S. M. Farris &amp; M. S. Hamdi, <a href="https://www.researchgate.net/publication/376787066">"Bifurcation Theory: A Review"</a>, <em>Al-Rafidain J. Comp. Sci. Math.</em> 17(2) (2023) 93–103.</li>
+                <li id="ref-8">Z. Liu, Y. Wu &amp; X. Zhang, <a href="https://doi.org/10.3934/dcdsb.2021009">"Existence of periodic wave trains for an age-structured model with diffusion"</a>, <em>Discrete Contin. Dyn. Syst. Ser. B</em> 26(12) (2021) 6117–6130.</li>
+            </ol>
+
+            <div class="tags">
+                <span>TAGS:</span>
+                <span class="t">#BIFURCATION</span><span class="t">#CHAOS</span><span class="t">#DYNAMICAL SYSTEMS</span><span class="t">#LORENZ</span><span class="t">#BTP</span>
+            </div>
+        </article>
+    </div>
+
+    <footer class="site">
+        <p>&copy; 2024 Shubham Kumar</p>
+    </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script>
+(function () {
+    'use strict';
+
+    const INK = '#1d1d1b', ACCENT = '#b3261e', MUTED = '#75736b', GRID = '#e3e0d6', CANVAS_BG = [251, 250, 246];
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    /* ---------- Typesetting & highlighting ---------- */
+    if (window.renderMathInElement) {
+        renderMathInElement(document.getElementById('post'), {
+            delimiters: [
+                { left: '$$', right: '$$', display: true },
+                { left: '\\(', right: '\\)', display: false }
+            ],
+            throwOnError: false
+        });
+    }
+    if (window.hljs) hljs.highlightAll();
+
+    /* ---------- Heading numbers, anchors & table of contents ---------- */
+    const post = document.getElementById('post');
+    const heads = [...post.querySelectorAll('h2[id], h3[id]')];
+    let n2 = 0;
+    heads.forEach(h => {
+        if (h.tagName === 'H2') {
+            n2++;
+            const num = document.createElement('span');
+            num.className = 'num';
+            num.textContent = n2 + '.';
+            h.prepend(num);
+        }
+        const a = document.createElement('a');
+        a.className = 'anchor'; a.href = '#' + h.id; a.textContent = '#';
+        a.setAttribute('aria-label', 'Link to this section');
+        h.append(a);
+    });
+    document.querySelectorAll('.toc ol').forEach(ol => {
+        heads.forEach(h => {
+            const li = document.createElement('li');
+            if (h.tagName === 'H3') li.className = 'sub';
+            const a = document.createElement('a');
+            a.href = '#' + h.id;
+            a.dataset.target = h.id;
+            a.textContent = [...h.childNodes].filter(nd => !(nd.classList && (nd.classList.contains('num') || nd.classList.contains('anchor')))).map(nd => nd.textContent).join('').trim();
+            li.append(a);
+            ol.append(li);
+        });
+    });
+    const tocLinks = [...document.querySelectorAll('.toc a[data-target]')];
+    function updateActive() {
+        let current = heads[0].id;
+        for (const h of heads) {
+            if (h.getBoundingClientRect().top < 120) current = h.id; else break;
+        }
+        tocLinks.forEach(a => a.classList.toggle('active', a.dataset.target === current));
+    }
+
+    /* ---------- Reading progress ---------- */
+    const bar = document.getElementById('progress');
+    function onScroll() {
+        const h = document.documentElement;
+        const max = h.scrollHeight - h.clientHeight;
+        bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+        updateActive();
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    /* ---------- Canvas helpers ---------- */
+    function fit(c) {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        const w = c.clientWidth, h = c.clientHeight;
+        c.width = Math.max(1, Math.round(w * dpr));
+        c.height = Math.max(1, Math.round(h * dpr));
+        const ctx = c.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, w, h, dpr };
+    }
+    function whenVisible(el, fn) {
+        if (!('IntersectionObserver' in window)) { fn(); return; }
+        const io = new IntersectionObserver(es => {
+            if (es.some(e => e.isIntersecting)) { io.disconnect(); fn(); }
+        }, { rootMargin: '200px' });
+        io.observe(el);
+    }
+    function axes(ctx, x0, y0, w, h, xTicks, yTicks, xr, yr) {
+        ctx.save();
+        ctx.strokeStyle = GRID; ctx.lineWidth = 1;
+        ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillStyle = MUTED;
+        xTicks.forEach(t => {
+            const X = x0 + (t - xr[0]) / (xr[1] - xr[0]) * w;
+            ctx.beginPath(); ctx.moveTo(X, y0); ctx.lineTo(X, y0 + h); ctx.stroke();
+            ctx.textAlign = 'center'; ctx.fillText(+t.toFixed(4), X, y0 + h + 13);
+        });
+        yTicks.forEach(t => {
+            const Y = y0 + h - (t - yr[0]) / (yr[1] - yr[0]) * h;
+            ctx.beginPath(); ctx.moveTo(x0, Y); ctx.lineTo(x0 + w, Y); ctx.stroke();
+            ctx.textAlign = 'right'; ctx.fillText(+t.toFixed(4), x0 - 5, Y + 3);
+        });
+        ctx.strokeStyle = '#b8b4a8';
+        ctx.strokeRect(x0 + .5, y0 + .5, w, h);
+        ctx.restore();
+    }
+    function ticks(a, b, n) {
+        const span = b - a, raw = span / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw) || raw;
+        const out = [];
+        for (let t = Math.ceil(a / step - 1e-9) * step; t <= b + 1e-9; t += step) out.push(+t.toFixed(10));
+        return out;
+    }
+
+    /* ---------- Lorenz integrator (RK4, allocation free) ---------- */
+    const SIG = 10, BET = 8 / 3;
+    function lzStep(s, rho, h) {
+        const x = s[0], y = s[1], z = s[2];
+        const k1x = SIG * (y - x), k1y = x * (rho - z) - y, k1z = x * y - BET * z;
+        let a = x + .5 * h * k1x, b = y + .5 * h * k1y, c = z + .5 * h * k1z;
+        const k2x = SIG * (b - a), k2y = a * (rho - c) - b, k2z = a * b - BET * c;
+        a = x + .5 * h * k2x; b = y + .5 * h * k2y; c = z + .5 * h * k2z;
+        const k3x = SIG * (b - a), k3y = a * (rho - c) - b, k3z = a * b - BET * c;
+        a = x + h * k3x; b = y + h * k3y; c = z + h * k3z;
+        const k4x = SIG * (b - a), k4y = a * (rho - c) - b, k4z = a * b - BET * c;
+        s[0] = x + h / 6 * (k1x + 2 * k2x + 2 * k3x + k4x);
+        s[1] = y + h / 6 * (k1y + 2 * k2y + 2 * k3y + k4y);
+        s[2] = z + h / 6 * (k1z + 2 * k2z + 2 * k3z + k4z);
+    }
+    function lzTrajectory(rho, steps, h, skip) {
+        const s = new Float64Array([1, 1, 1]);
+        for (let i = 0; i < skip; i++) lzStep(s, rho, h);
+        const pts = new Float32Array(steps * 3);
+        for (let i = 0; i < steps; i++) {
+            pts[3 * i] = s[0]; pts[3 * i + 1] = s[1]; pts[3 * i + 2] = s[2];
+            lzStep(s, rho, h);
+        }
+        return pts;
+    }
+
+    /* ---------- Hero: rotating Lorenz attractor ---------- */
+    (function hero() {
+        const c = document.getElementById('hero');
+        const pts = lzTrajectory(28, 14000, 0.005, 400);
+        const N = pts.length / 3;
+        let g, theta = -0.6, head = 0, running = true;
+        function draw() {
+            const { ctx, w, h } = g;
+            ctx.clearRect(0, 0, w, h);
+            const sc = Math.min(w / 64, h / 54);
+            const cx = w / 2, cy = h / 2 + 25 * sc;
+            const ct = Math.cos(theta), st = Math.sin(theta);
+            const CH = 140;
+            ctx.lineWidth = 0.75;
+            for (let s0 = 0; s0 < N - 1; s0 += CH) {
+                const e = Math.min(N - 1, s0 + CH);
+                let depth = 0;
+                ctx.beginPath();
+                for (let i = s0; i <= e; i++) {
+                    const x = pts[3 * i], y = pts[3 * i + 1], z = pts[3 * i + 2];
+                    const X = x * ct - y * st, D = x * st + y * ct;
+                    depth += D;
+                    const px = cx + X * sc, py = cy - z * sc;
+                    if (i === s0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                depth /= (e - s0 + 1);
+                const t = Math.max(0, Math.min(1, (depth + 22) / 44));
+                ctx.strokeStyle = `rgba(29,29,27,${0.18 + 0.55 * t})`;
+                ctx.stroke();
+            }
+            // moving state
+            const x = pts[3 * head], y = pts[3 * head + 1], z = pts[3 * head + 2];
+            const X = x * ct - y * st;
+            ctx.fillStyle = ACCENT;
+            ctx.beginPath(); ctx.arc(cx + X * sc, cy - z * sc, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+        function frame() {
+            if (!running) return;
+            theta += 0.0025;
+            head = (head + 3) % N;
+            draw();
+            requestAnimationFrame(frame);
+        }
+        function init() { g = fit(c); draw(); }
+        init();
+        window.addEventListener('resize', init);
+        if (!reduceMotion && 'IntersectionObserver' in window) {
+            new IntersectionObserver(es => {
+                const vis = es[0].isIntersecting;
+                if (vis && !running) { running = true; requestAnimationFrame(frame); }
+                else if (!vis) running = false;
+            }).observe(c);
+            requestAnimationFrame(frame);
+        } else running = false;
+    })();
+
+    /* ---------- Logistic map: explorer ---------- */
+    const state = { r: 3.2, x0: 0.4 };
+    const listeners = [];
+    function setR(r) {
+        state.r = Math.max(0, Math.min(4, r));
+        document.getElementById('rSlider').value = state.r;
+        listeners.forEach(f => f());
+    }
+    function classify(r, x0) {
+        let x = x0;
+        for (let i = 0; i < 3000; i++) x = r * x * (1 - x);
+        const tail = new Float64Array(1000);
+        let lsum = 0, lcount = 0;
+        for (let i = 0; i < 1000; i++) {
+            tail[i] = x;
+            const d = Math.abs(r * (1 - 2 * x));
+            if (d > 0) { lsum += Math.log(d); lcount++; }
+            x = r * x * (1 - x);
+        }
+        const lyap = lcount ? lsum / lcount : -Infinity;
+        let period = 0;
+        for (let p = 1; p <= 64 && !period; p++) {
+            let ok = true;
+            for (let i = 1000 - 200; i < 1000 - p; i++) if (Math.abs(tail[i] - tail[i + p]) > 1e-6) { ok = false; break; }
+            if (ok) period = p;
+        }
+        return { period, lyap, x: tail[999] };
+    }
+    (function explorer() {
+        const rS = document.getElementById('rSlider'), xS = document.getElementById('x0Slider');
+        const rO = document.getElementById('rOut'), xO = document.getElementById('x0Out');
+        const cw = document.getElementById('cobweb'), ts = document.getElementById('series');
+        const out = document.getElementById('readout');
+        let gc, gs;
+        function render() {
+            const { r, x0 } = state;
+            rO.textContent = r.toFixed(3); xO.textContent = x0.toFixed(2);
+            document.querySelectorAll('#rPresets button').forEach(b => b.classList.toggle('on', Math.abs(+b.dataset.r - r) < 1e-9));
+
+            // Cobweb
+            {
+                const { ctx, w, h } = gc;
+                ctx.clearRect(0, 0, w, h);
+                const m = { l: 34, r: 8, t: 6, b: 20 };
+                const S = Math.min(w - m.l - m.r, h - m.t - m.b);
+                const ox = m.l + ((w - m.l - m.r) - S) / 2, oy = m.t;
+                axes(ctx, ox, oy, S, S, [0, .5, 1], [0, .5, 1], [0, 1], [0, 1]);
+                const P = (x, y) => [ox + x * S, oy + S - y * S];
+                ctx.strokeStyle = '#b8b4a8'; ctx.lineWidth = 1;
+                ctx.beginPath(); ctx.moveTo(...P(0, 0)); ctx.lineTo(...P(1, 1)); ctx.stroke();
+                ctx.strokeStyle = INK; ctx.lineWidth = 1.6;
+                ctx.beginPath();
+                for (let i = 0; i <= 120; i++) { const x = i / 120; const p = P(x, r * x * (1 - x)); i ? ctx.lineTo(...p) : ctx.moveTo(...p); }
+                ctx.stroke();
+                let x = x0;
+                const steps = 80;
+                ctx.lineWidth = 1;
+                let px = P(x, 0);
+                for (let i = 0; i < steps; i++) {
+                    const y = r * x * (1 - x);
+                    const a = 0.15 + 0.85 * (i / steps);
+                    ctx.strokeStyle = `rgba(179,38,30,${a})`;
+                    ctx.beginPath(); ctx.moveTo(...px);
+                    const p1 = P(x, y), p2 = P(y, y);
+                    ctx.lineTo(...p1); ctx.lineTo(...p2); ctx.stroke();
+                    px = p2; x = y;
+                }
+            }
+            // Time series
+            {
+                const { ctx, w, h } = gs;
+                ctx.clearRect(0, 0, w, h);
+                const m = { l: 34, r: 8, t: 6, b: 20 };
+                const W = w - m.l - m.r, H = h - m.t - m.b;
+                const N = 60;
+                axes(ctx, m.l, m.t, W, H, [0, 20, 40, 60], [0, .5, 1], [0, N], [0, 1]);
+                let x = x0;
+                const P = (n, v) => [m.l + n / N * W, m.t + H - v * H];
+                ctx.strokeStyle = INK; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.moveTo(...P(0, x));
+                const xs = [x];
+                for (let n = 1; n <= N; n++) { x = r * x * (1 - x); xs.push(x); ctx.lineTo(...P(n, x)); }
+                ctx.stroke();
+                ctx.fillStyle = ACCENT;
+                xs.forEach((v, n) => { const p = P(n, v); ctx.beginPath(); ctx.arc(p[0], p[1], 2, 0, 7); ctx.fill(); });
+            }
+            // Readout
+            const { period, lyap, x } = classify(r, x0);
+            const lam = isFinite(lyap) ? lyap.toFixed(3) : '−∞';
+            let label, chaos = false;
+            if (period === 1) label = r <= 1 ? 'extinction · x* = 0' : `fixed point · x* = ${x.toFixed(4)}`;
+            else if (period > 1) label = `period-${period} cycle`;
+            else if (lyap > 0.001) { label = 'chaos'; chaos = true; }
+            else label = 'very long period / slow convergence';
+            out.innerHTML = `<span class="tag${chaos ? ' chaos' : ''}">${label}</span>Lyapunov exponent λ ≈ ${lam}`;
+        }
+        function init() { gc = fit(cw); gs = fit(ts); render(); }
+        rS.addEventListener('input', () => setR(+rS.value));
+        xS.addEventListener('input', () => { state.x0 = +xS.value; render(); });
+        document.querySelectorAll('#rPresets button').forEach(b => b.addEventListener('click', () => setR(+b.dataset.r)));
+        document.querySelectorAll('a[data-set-r]').forEach(a => a.addEventListener('click', () => setR(+a.dataset.setR)));
+        listeners.push(render);
+        init();
+        window.addEventListener('resize', init);
+    })();
+
+    /* ---------- Logistic map: bifurcation diagram ---------- */
+    (function bifurcation() {
+        const c = document.getElementById('bif');
+        let view = [2.8, 4, 0, 1], g, base = null;
+        const m = { l: 36, r: 8, t: 6, b: 20 };
+        function compute() {
+            const { ctx, w, h, dpr } = g;
+            const W = Math.round((w - m.l - m.r) * dpr), H = Math.round((h - m.t - m.b) * dpr);
+            const dens = new Float32Array(W * H);
+            const [r0, r1, y0, y1] = view;
+            const zoomed = (r1 - r0) < 0.5;
+            const trans = zoomed ? 2000 : 600, keep = zoomed ? 1500 : 400;
+            for (let i = 0; i < W; i++) {
+                const r = r0 + (i + 0.5) / W * (r1 - r0);
+                let x = 0.5;
+                for (let k = 0; k < trans; k++) x = r * x * (1 - x);
+                for (let k = 0; k < keep; k++) {
+                    x = r * x * (1 - x);
+                    if (x >= y0 && x <= y1) {
+                        const j = Math.min(H - 1, Math.floor((1 - (x - y0) / (y1 - y0)) * H));
+                        dens[j * W + i]++;
+                    }
+                }
+            }
+            const img = ctx.createImageData(W, H);
+            const scale = keep / 400;
+            for (let p = 0; p < W * H; p++) {
+                const a = 1 - Math.exp(-dens[p] / (2.2 * scale));
+                img.data[4 * p] = CANVAS_BG[0] + (29 - CANVAS_BG[0]) * a;
+                img.data[4 * p + 1] = CANVAS_BG[1] + (29 - CANVAS_BG[1]) * a;
+                img.data[4 * p + 2] = CANVAS_BG[2] + (27 - CANVAS_BG[2]) * a;
+                img.data[4 * p + 3] = 255;
+            }
+            base = img;
+        }
+        function render() {
+            const { ctx, w, h, dpr } = g;
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.clearRect(0, 0, c.width, c.height);
+            ctx.putImageData(base, Math.round(m.l * dpr), Math.round(m.t * dpr));
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            const W = w - m.l - m.r, H = h - m.t - m.b;
+            const [r0, r1, y0, y1] = view;
+            ctx.save();
+            ctx.font = '10px "JetBrains Mono", monospace'; ctx.fillStyle = MUTED;
+            ctx.strokeStyle = '#b8b4a8'; ctx.strokeRect(m.l + .5, m.t + .5, W, H);
+            ticks(r0, r1, 6).forEach(t => { const X = m.l + (t - r0) / (r1 - r0) * W; ctx.textAlign = 'center'; ctx.fillText(+t.toFixed(4), X, m.t + H + 13); ctx.fillRect(X, m.t + H, 1, 4); });
+            ticks(y0, y1, 4).forEach(t => { const Y = m.t + H - (t - y0) / (y1 - y0) * H; ctx.textAlign = 'right'; ctx.fillText(+t.toFixed(4), m.l - 5, Y + 3); ctx.fillRect(m.l - 4, Y, 4, 1); });
+            if (state.r >= r0 && state.r <= r1) {
+                const X = m.l + (state.r - r0) / (r1 - r0) * W;
+                ctx.strokeStyle = ACCENT; ctx.lineWidth = 1.2;
+                ctx.beginPath(); ctx.moveTo(X, m.t); ctx.lineTo(X, m.t + H); ctx.stroke();
+                ctx.fillStyle = ACCENT; ctx.textAlign = X > m.l + W - 60 ? 'right' : 'left';
+                ctx.fillText('r = ' + state.r.toFixed(3), X + (ctx.textAlign === 'right' ? -5 : 5), m.t + 12);
+            }
+            ctx.restore();
+        }
+        function init() { g = fit(c); compute(); render(); }
+        whenVisible(c, () => {
+            init();
+            window.addEventListener('resize', init);
+            listeners.push(render);
+        });
+        document.querySelectorAll('#bifPresets button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#bifPresets button').forEach(x => x.classList.remove('on'));
+            b.classList.add('on');
+            view = b.dataset.v.split(',').map(Number);
+            if (g) { compute(); render(); }
+        }));
+        c.addEventListener('click', e => {
+            const rect = c.getBoundingClientRect();
+            const W = rect.width - m.l - m.r;
+            const fx = (e.clientX - rect.left - m.l) / W;
+            if (fx < 0 || fx > 1) return;
+            setR(+(view[0] + fx * (view[1] - view[0])).toFixed(4));
+        });
+    })();
+
+    /* ---------- Butterfly effect: diverging trajectories ---------- */
+    (function diverge() {
+        const c = document.getElementById('diverge'), out = document.getElementById('divergeOut');
+        const r = 3.9, N = 80, X0 = 0.506;
+        let d0 = 1.27e-4, g;
+        function render() {
+            const { ctx, w, h } = g;
+            ctx.clearRect(0, 0, w, h);
+            const m = { l: 34, r: 8, t: 6, b: 20 };
+            const W = w - m.l - m.r, H = h - m.t - m.b;
+            axes(ctx, m.l, m.t, W, H, ticks(0, N, 8), [0, .5, 1], [0, N], [0, 1]);
+            const a = [X0], b = [X0 + d0];
+            for (let n = 1; n <= N; n++) { a.push(r * a[n - 1] * (1 - a[n - 1])); b.push(r * b[n - 1] * (1 - b[n - 1])); }
+            let split = a.findIndex((v, n) => Math.abs(v - b[n]) > 0.1);
+            const P = (n, v) => [m.l + n / N * W, m.t + H - v * H];
+            if (split > 0) {
+                const X = P(split, 0)[0];
+                ctx.fillStyle = 'rgba(179,38,30,0.06)';
+                ctx.fillRect(X, m.t, m.l + W - X, H);
+                ctx.strokeStyle = ACCENT; ctx.setLineDash([3, 3]);
+                ctx.beginPath(); ctx.moveTo(X, m.t); ctx.lineTo(X, m.t + H); ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            [[a, INK, 1.6], [b, ACCENT, 1.1]].forEach(([s, col, lw]) => {
+                ctx.strokeStyle = col; ctx.lineWidth = lw;
+                ctx.beginPath();
+                s.forEach((v, n) => { const p = P(n, v); n ? ctx.lineTo(...p) : ctx.moveTo(...p); });
+                ctx.stroke();
+            });
+            out.innerHTML = split > 0
+                ? `<span class="tag chaos">separated</span>the two runs differ by more than 0.1 after n = ${split} steps`
+                : 'the two runs stay together for all 80 steps';
+        }
+        function init() { g = fit(c); render(); }
+        whenVisible(c, () => { init(); window.addEventListener('resize', init); });
+        document.querySelectorAll('#gapPresets button').forEach(btn => btn.addEventListener('click', () => {
+            document.querySelectorAll('#gapPresets button').forEach(x => x.classList.remove('on'));
+            btn.classList.add('on');
+            d0 = +btn.dataset.d;
+            if (g) render();
+        }));
+    })();
+
+    /* ---------- Lorenz trio (rho = 10, 28, 50) ---------- */
+    (function trio() {
+        const items = [10, 28, 50].map(rho => ({ rho, c: document.getElementById('lz' + rho), pts: null }));
+        function draw(it) {
+            const { ctx, w, h } = fit(it.c);
+            if (!it.pts) it.pts = lzTrajectory(it.rho, 10000, 0.005, 0);
+            const p = it.pts, N = p.length / 3, th = -0.75, ct = Math.cos(th), st = Math.sin(th);
+            let minX = 1e9, maxX = -1e9, minZ = 1e9, maxZ = -1e9;
+            for (let i = 0; i < N; i++) {
+                const X = p[3 * i] * ct - p[3 * i + 1] * st, Z = p[3 * i + 2];
+                if (X < minX) minX = X; if (X > maxX) maxX = X; if (Z < minZ) minZ = Z; if (Z > maxZ) maxZ = Z;
+            }
+            const sc = Math.min((w - 16) / (maxX - minX || 1), (h - 16) / (maxZ - minZ || 1));
+            const ox = w / 2 - (minX + maxX) / 2 * sc, oy = h / 2 + (minZ + maxZ) / 2 * sc;
+            ctx.clearRect(0, 0, w, h);
+            ctx.strokeStyle = 'rgba(29,29,27,0.55)'; ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            for (let i = 0; i < N; i++) {
+                const X = ox + (p[3 * i] * ct - p[3 * i + 1] * st) * sc, Y = oy - p[3 * i + 2] * sc;
+                i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y);
+            }
+            ctx.stroke();
+            const L = N - 1;
+            ctx.fillStyle = ACCENT;
+            ctx.beginPath(); ctx.arc(ox + (p[3 * L] * ct - p[3 * L + 1] * st) * sc, oy - p[3 * L + 2] * sc, 3, 0, 7); ctx.fill();
+        }
+        items.forEach(it => whenVisible(it.c, () => draw(it)));
+        window.addEventListener('resize', () => items.forEach(it => it.pts && draw(it)));
+    })();
+
+    /* ---------- Lorenz bifurcation diagram (z maxima) ---------- */
+    (function lorenzBif() {
+        const c = document.getElementById('lzbif'), status = document.getElementById('lzStatus');
+        const m = { l: 40, r: 8, t: 8, b: 22 };
+        let range = [0, 50], data = null, job = 0, g;
+        const marks = [[1, 'ρ=1'], [13.93, '13.93'], [24.06, '24.06'], [24.74, 'ρH']];
+        function render(done) {
+            g = fit(c);
+            const { ctx, w, h } = g;
+            ctx.clearRect(0, 0, w, h);
+            const W = w - m.l - m.r, H = h - m.t - m.b;
+            let zmax = 10;
+            data.forEach(col => col.forEach(z => { if (z > zmax) zmax = z; }));
+            zmax = done ? zmax * 1.05 : Math.max(zmax * 1.05, range[1] * 1.8);
+            axes(ctx, m.l, m.t, W, H, ticks(range[0], range[1], 8), ticks(0, zmax, 5), range, [0, zmax]);
+            if (range[1] <= 60) {
+                ctx.save();
+                ctx.font = '10px "JetBrains Mono", monospace';
+                marks.forEach(([rho, lab], k) => {
+                    const X = m.l + (rho - range[0]) / (range[1] - range[0]) * W;
+                    ctx.strokeStyle = 'rgba(179,38,30,0.55)'; ctx.setLineDash([3, 3]);
+                    ctx.beginPath(); ctx.moveTo(X, m.t); ctx.lineTo(X, m.t + H); ctx.stroke();
+                    ctx.setLineDash([]); ctx.fillStyle = ACCENT;
+                    ctx.textAlign = k === 3 ? 'left' : 'right';
+                    ctx.fillText(lab, X + (k === 3 ? 4 : -4), m.t + 12 + (k === 2 ? 12 : 0));
+                });
+                ctx.restore();
+            }
+            ctx.fillStyle = 'rgba(29,29,27,0.6)';
+            const cols = data.length;
+            data.forEach((col, i) => {
+                const rho = range[0] + (i + 0.5) / cols * (range[1] - range[0]);
+                const X = m.l + (rho - range[0]) / (range[1] - range[0]) * W;
+                col.forEach(z => { ctx.fillRect(X - .6, m.t + H - z / zmax * H - .6, 1.2, 1.2); });
+            });
+        }
+        function start() {
+            const my = ++job;
+            const cols = Math.min(700, Math.max(200, Math.round(c.clientWidth - m.l - m.r)));
+            data = [];
+            const h = 0.005, trans = 8000, rec = 8000;
+            let i = 0;
+            function chunk() {
+                if (my !== job) return;
+                const t0 = performance.now();
+                while (i < cols && performance.now() - t0 < 14) {
+                    const rho = range[0] + (i + 0.5) / cols * (range[1] - range[0]);
+                    const s = new Float64Array([1, 1, 1]);
+                    for (let k = 0; k < trans; k++) lzStep(s, rho, h);
+                    const peaks = [];
+                    let zPrev = s[2]; lzStep(s, rho, h); let zCur = s[2];
+                    for (let k = 0; k < rec; k++) {
+                        lzStep(s, rho, h);
+                        const zNext = s[2];
+                        if (zCur > zPrev && zCur >= zNext) peaks.push(zCur);
+                        zPrev = zCur; zCur = zNext;
+                    }
+                    if (!peaks.length) peaks.push(s[2]);
+                    data.push(peaks);
+                    i++;
+                }
+                const done = i >= cols;
+                render(done);
+                status.textContent = done ? '' : `computing… ${Math.round(100 * i / cols)}%`;
+                if (!done) requestAnimationFrame(chunk);
+            }
+            requestAnimationFrame(chunk);
+        }
+        whenVisible(c, start);
+        window.addEventListener('resize', () => { if (data) render(true); });
+        document.querySelectorAll('#lzPresets button').forEach(b => b.addEventListener('click', () => {
+            document.querySelectorAll('#lzPresets button').forEach(x => x.classList.remove('on'));
+            b.classList.add('on');
+            range = b.dataset.v.split(',').map(Number);
+            start();
+        }));
+    })();
+})();
+</script>
+</body>
+</html>

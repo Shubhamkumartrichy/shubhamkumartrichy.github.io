@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Under Construction | Shubham</title>
+    <link rel="icon" type="image/png" href="Media/Favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .uc-container {
+            background: #fff;
+            border: 2px dashed #bbb;
+            border-radius: 12px;
+            padding: 40px 32px 32px 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            text-align: center;
+            max-width: 400px;
+            margin: 40px 16px;
+        }
+        .uc-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #222;
+        }
+        .uc-msg {
+            font-size: 1.2rem;
+            color: #444;
+            margin-bottom: 28px;
+        }
+        .uc-video {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 16px auto;
+            border-radius: 12px;
+            background: #eee;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        @media (max-width: 600px) {
+            .uc-container {
+                padding: 24px 8px 16px 8px;
+                max-width: 95vw;
+            }
+            .uc-title {
+                font-size: 1.3rem;
+            }
+            .uc-msg {
+                font-size: 1rem;
+            }
+            .uc-video {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="uc-container">
+        <div class="uc-video">
+            <video src="Media/load.mp4" autoplay loop muted playsinline width="100%" height="100%"></video>
+        </div>
+        <div class="uc-title">This page is under construction</div>
+        <div class="uc-msg">We're working hard to bring this page to life.<br>Please check back soon!</div>
+        <a href="index.html" class="nav-link" style="background:#000;color:#fff;padding:8px 24px;border-radius:20px;">Go Home</a>
+    </div>
+</body>
+</html>

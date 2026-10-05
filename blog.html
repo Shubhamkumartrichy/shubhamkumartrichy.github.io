@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Index | Shubham</title>
+    <link rel="icon" type="image/png" href="Media/Favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1 class="main-title">Shubham Kumar</h1>
+            <p class="greeting"><span id="dynamic-greeting">Hello everyone!</span></p>
+            
+            <nav class="navigation">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="blog.html" class="nav-link active">Blog</a>
+                <!-- <a href="#" class="nav-link">Site</a>
+                <a href="#" class="nav-link">V1</a> -->
+            </nav>
+            
+            <!-- <div class="search-container">
+                <input type="text" placeholder="Search..." class="search-input">
+                <button class="search-clear">×</button>
+            </div> -->
+        </header>
+
+        <!-- Blog Header -->
+        <div class="blog-header">
+            <h2 class="blog-title">Blog Posts</h2>
+            <div class="blog-controls">
+                <select class="category-filter">
+                    <option value="all">All Categories</option>
+                    <option value="gate">GATE</option>
+                    <option value="dev">Dev</option>
+                    <option value="ai">AI</option>
+                    <option value="math">Math</option>
+                </select>
+                <div class="layout-toggle">
+                    <button class="layout-btn grid-btn active" data-layout="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="layout-btn list-btn" data-layout="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Blog Posts Grid -->
+            <div class="blog-grid" id="blogGrid">
+                <!-- Blog Post 1 -->
+                <div class="blog-card card-paper" data-category="math">
+                    <div class="card-header">
+                        <span class="date">March 22, 2025</span>
+                        <span class="category">Math</span>
+                    </div>
+                    <h3 class="card-title">Bifurcation &amp; Chaos</h3>
+                    <p class="card-description">From a population of rabbits to the butterfly effect: the logistic map, Feigenbaum's constant and the Lorenz system, with interactive figures.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='bifurcation-and-chaos.html'">Read More ></button>
+                        <span class="views">102 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog Post: Gold, Silver & a Kalman Filter -->
+                <div class="blog-card card-paper" data-category="math">
+                    <div class="card-header">
+                        <span class="date">December 20, 2025</span>
+                        <span class="category">Math</span>
+                    </div>
+                    <h3 class="card-title">Gold, Silver &amp; a Kalman Filter</h3>
+                    <p class="card-description">A pairs-trading experiment that turned into a gold–silver rotation strategy, backtested over 20 years with live charts and an honest stress test.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='gold-silver-kalman.html'">Read More ></button>
+                        <span class="views">57 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog Post 2 -->
+                <div class="blog-card" data-category="gate">
+                    <div class="card-header">
+                        <span class="date">March 22, 2026</span>
+                        <span class="category">GATE</span>
+                    </div>
+                    <h3 class="card-title">My Gate Journey</h3>
+                    <p class="card-description">At the start of my third year in my Bachelor's, I suddenly decided, without any clear reason, to prepare for GATE instead of going abroad. I had always dreamed of...</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">0 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog Post 3 -->
+                <div class="blog-card" data-category="dev">
+                    <div class="card-header">
+                        <span class="date">March 22, 2025</span>
+                        <span class="category">Dev</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works.<br>More details will appear here soon.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">0 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog Post 4 -->
+                <div class="blog-card" data-category="ai">
+                    <div class="card-header">
+                        <span class="date">February 29, 2024</span>
+                        <span class="category">Math</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works.<br>More details will appear here soon.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">0 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog Post 5 -->
+                <div class="blog-card" data-category="ai">
+                    <div class="card-header">
+                        <span class="date">September 30, 2024</span>
+                        <span class="category">AI</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works.<br>More details will appear here soon.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">0 views</span>
+                    </div>
+                </div>
+
+                <!-- Blog  Post 7
+                <div class="blog-card" data-category="dev">
+                    <div class="card-header">
+                        <span class="date">January 15, 2024</span>
+                        <span class="category">Dev</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works.<br>More details will appear here soon.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">567 views</span>
+                    </div>
+                </div>
+
+                 Blog Post 8 
+                <div class="blog-card" data-category="baduk">
+                    <div class="card-header">
+                        <span class="date">December 5, 2023</span>
+                        <span class="category">Baduk</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works.<br>More details will appear here soon.</p>
+                    <div class="blog-card-footer">
+                        <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                        <span class="views">734 views</span>
+                    </div>
+                </div> -->
+            </div> 
+
+            <!-- Load More Button -->
+            <div class="load-more-container">
+                <div class="load-more-message">
+                    <!-- <i class="fas fa-spinner fa-spin" style="color:#000;margin-right:8px;"></i> -->
+                    <strong>Stay connected — new blogs arriving shortly.</strong>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Shubham Kumar</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+
+const greetings = [
+    "Hello everyone!",             // English
+    "सभी को नमस्कार!",             // Hindi
+    "எல்லோருக்கும் வணக்கம்!",      // Tamil
+    "ಎಲ್ಲರಿಗೂ ನಮಸ್ಕಾರ!",          // Kannada
+    "सर्वांना नमस्कार!",            // Marathi
+    "こんにちは皆さん!",              // Japanese
+    "大家好!",                       // Mandarin Chinese
+    "Hallo zusammen!",              // German
+    "¡Hola a todos!",               // Spanish
+    "Bonjour à tous!",              // French
+    "सर्वेभ्यः नमः!",               // Sanskrit
+    "Ciao a tutti!",                // Italian
+    "সবাইকে শুভেচ্ছা!",             // Bengali
+    "എല്ലാവർക്കും നമസ്കാരം!",         // Malayalam
+    "అందరికి నమస్కారం!",             // Telugu
+    "ਸਾਰੇਆਂ ਨੂੰ ਨਮਸਕਾਰ!"           // Punjabi
+];
+
+let idx = 0;
+setInterval(() => {
+    const el = document.getElementById('dynamic-greeting');
+    if (el) {
+        el.textContent = greetings[idx];
+        idx = (idx + 1) % greetings.length;
+    }
+}, 1000);
+</script>
+</body>
+</html>

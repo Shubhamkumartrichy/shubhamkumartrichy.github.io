@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Shubham</title>
+    <link rel="icon" type="image/png" href="Media/Favicon.png">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1 class="main-title">Shubham Kumar</h1>
+            <h1 class="main-title"></h1>
+            <p class="greeting"><span id="dynamic-greeting">Hello everyone!</span></p>
+            
+            <nav class="navigation">
+                <a href="index.html" class="nav-link active">Home</a>
+                <a href="blog.html" class="nav-link">Blog</a>
+                <!-- <a href="#" class="nav-link">Site</a>
+                <a href="#" class="nav-link">V1</a> -->
+            </nav>
+            
+            <!-- <div class="search-container">
+                <input type="text" placeholder="Search..." class="search-input">
+                <button class="search-clear">×</button>
+            </div> -->
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Row - About Me and Profile Image -->
+            <div class="content-row about-top-row">
+                <div class="content-card about-me-card">
+                    <h3 class="card-title">About Me</h3>
+                    <div class="about-text">
+                        <p>I'm a final-year B.Tech student in Mathematics & Computing at <strong>RGIPT (INI)</strong>, with interests in <strong>Algorithms</strong> (Competitive Programming), <strong>Formal Methods</strong> and <strong>Quantitative Finance</strong>.</p>
+                        <p>My hobbies include travel, cultural exploration, watching anime, playing games (Genshin Impact, Fortnite, League of Legends, Clash of Clans), Additionally, I play the strategy board game Go (Weiqi/Baduk).</p>
+                        <p>I am fond of football and bleed Blaugrana.</p>
+                    </div>
+                </div>
+                <div class="content-card profile-image-card">
+                    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+                        <img src="Media/Me.jpg" alt="Profile Photo" class="profile-photo" />
+                        <span style="margin-top: 12px; font-size: 1rem; color: #444;">2nd March, 2024</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Second Row - Timeline and Music -->
+            <div class="content-row about-second-row">
+                <div class="content-card visual-escape-card">
+                    <div class="ve-pond-wrap">
+                        <iframe src="https://koi-pond-pixel.vercel.app/?embed=1&fish=7&rain=.35&reeds=.7&lilypads=1&sparkles=30&height=320&scale=1.15" title="Interactive pixel-art koi pond" loading="lazy" allow="fullscreen" scrolling="no"></iframe>
+                        <span class="ve-pond-caption">click to interact ✦</span>
+                    </div>
+                    <span class="ve-subtitle" style="display:block; text-align:center; padding: 10px 0 0 0;">Evening Pond, inspired by Hiroshi Yoshida<br>
+                        <span style="font-size:0.7rem; color:#aaa;">A 20th-century Japanese painter and woodblock printmaker, one of the greatest artists of the shin-hanga style, celebrated for his breathtaking landscape prints — including scenes from India.</span>
+                    </span>
+                </div>
+                <div class="content-card">
+                    <h3 class="card-title">Timeline</h3>
+                    <div class="timeline-items">
+                        <div class="timeline-year-label">2025</div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Outlier AI</div>
+                            <div class="timeline-description">Currently working with Outlier AI.</div>
+                        </div>
+                        <!-- <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">GATE CSE 2025</div>
+                            <div class="timeline-description">Scored 98.22 percentile in Graduate Aptitude Test in Engineering (GATE) 2025.</div>
+                        </div> -->
+                        <div class="timeline-separator timeline-separator-red"></div>
+                        <div class="timeline-year-label">2024</div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Joined Gyanarpan, Project Amethi</div>
+                            <div class="timeline-description">An initiative by RGIPT aimed at providing free and quality education to students in the Amethi district.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Competitive Programming</div>
+                            <div class="timeline-description">Practiced on platforms such as Codeforces (Max Rating: 1298, Pupil), CodeChef (Max Rating: 1736), and LeetCode. Secured a global rank of 61 in CodeChef START113 among 30,000+ participants.</div>
+                        </div>
+                        <div class="timeline-separator timeline-separator-red"></div>
+                        <div class="timeline-year-label">2023</div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Participated in ICPC</div>
+                            <div class="timeline-description">International Collegiate Programming Contest (ICPC) is a team-based programming competition. Though we couldn’t make it to the results, I had a great time preparing for it with other two teammates.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Winner of CodeRiddle (Team TLE)</div>
+                            <div class="timeline-description">An algorithmic problem-solving contest held at URJOTSAV’23, the annual tech fest of RGIPT.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Reliance Foundation Undergraduate Scholar</div>
+                            <div class="timeline-description">Selected among the top 5,000 students from a pool of 40,000+ applicants.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Participated in Meta Hacker Cup</div>
+                            <div class="timeline-description">Competed in Meta’s annual international programming competition focused on problem-solving and algorithms.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Did my First Hackathon</div>
+                            <div class="timeline-description">Participated in Hack-cessible, my first hackathon, as a member of the amHACKS team.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">HSF-India Training at TIFR</div>
+                            <div class="timeline-description">Attended the HSF-India Training by CERN. This training mainly focus on High Energy Physics and Machine Learning.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Joined ACM Student Chapter</div>
+                            <div class="timeline-description">Association for Computing Machinery (ACM) Student Chapter at RGIPT, is a student-run community that promotes learning, collaboration, and research in computer science.</div>
+                        </div>
+                        <div class="timeline-separator timeline-separator-red"></div>
+                        <div class="timeline-year-label">2022</div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Wrote And Ran My First C Program</div>
+                            <div class="timeline-description">Instead of the traditional "Hello World," my first program performed the addition of two numbers.</div>
+                        </div>
+                        <div class="timeline-separator"></div>
+                        <div class="timeline-item">
+                            <div class="timeline-title">Joined Rajiv Gandhi Institute of Petroleum Technology</div>
+                            <div class="timeline-description">Joined Rajiv Gandhi Institute of Petroleum Technology as a Mathematics And Computing UG student.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-row">
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">September 30, 2024</span>
+                        <span class="category">Blog</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                    <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">Feb 20, 2025</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">March 21, 2026</span>
+                        <span class="category">Blog</span>
+                    </div>
+                    <h3 class="card-title">GATE 2026 Experiences</h3>
+                    <p class="card-description">This blog contains my experiences for GATE 2026.</p>
+                    <button class="read-more-btn" onclick="window.location.href='under-construction.html'">Read More ></button>
+                </div>
+            </div>
+
+            <!-- Bottom Row -->
+            <div class="content-row">
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">March 22, 2025</span>
+                        <span class="category">Blog</span>
+                    </div>
+                    <div class="card-content-with-image">
+                        <div class="text-content">
+                            <h3 class="card-title">Bifurcation &amp; Chaos</h3>
+                            <p class="card-description">From a population of rabbits to the butterfly effect: what happens when you turn one knob in a simple equation, and why order hides inside randomness.</p>
+                        </div>
+                        <div class="go-board-image">
+                            <canvas id="lorenzCard" class="go-board-img" role="img" aria-label="A rotating Lorenz attractor at rho = 28"></canvas>
+                        </div>
+                    </div>
+                    <button class="read-more-btn" onclick="window.location.href='bifurcation-and-chaos.html'">Read More ></button>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">December 20, 2025</span>
+                        <span class="category">Blog</span>
+                    </div>
+                    <h3 class="card-title">Gold, Silver &amp; a Kalman Filter</h3>
+                    <p class="card-description">Two metals, one rule: always ride the one that's winning.</p>
+                    <div class="home-stats" role="group" aria-label="Backtest results, 28 Apr 2006 to 12 Feb 2026">
+                        <div><span class="k">Period</span><span class="v">19.8 yrs</span><span class="s">2006 – 2026</span></div>
+                        <div class="win"><span class="k">Our strategy</span><span class="v">+1015.9%</span><span class="s">₹10k → ₹111.6k</span></div>
+                        <div><span class="k">Hold gold</span><span class="v">+593.5%</span><span class="s">GLD</span></div>
+                        <div><span class="k">Hold silver</span><span class="v">+390.4%</span><span class="s">SLV</span></div>
+                    </div>
+                    <button class="read-more-btn" onclick="window.location.href='gold-silver-kalman.html'">Read More ></button>
+                </div>
+            </div>
+
+            <!-- Latest News Section -->
+            <div class="content-row">
+                <div class="content-card">
+                    <h3 class="card-title" style="margin-bottom:0;">Latest News</h3>
+                    <hr class="news-divider">
+                    <div class="news-list">
+                        <div class="news-item">
+                            <span class="news-text" style="font-weight:600;">Officially a Bachelor's Graduate</span>
+                            <span class="news-date" style="display:block; color:#888; font-size:0.98em; margin-top:2px;">May 26, 2026</span>
+                        </div>
+                        <div class="news-item">
+                            <span class="news-text" style="font-weight:600;">Joined Gyanarpan</span>
+                            <span class="news-date" style="display:block; color:#888; font-size:0.98em; margin-top:2px;">Jan 19, 2024</span>
+                        </div>
+                        <div class="news-item">
+                            <span class="news-text" style="font-weight:600;">Winner of CodeRiddle (Team TLE) @URJOTSAV’23</span>
+                            <span class="news-date" style="display:block; color:#888; font-size:0.98em; margin-top:2px;">Nov 5, 2023</span>
+                        </div>
+                        <div class="news-item">
+                            <span class="news-text" style="font-weight:600;">Reliance Foundation Undergraduate Scholar</span>
+                            <span class="news-date" style="display:block; color:#888; font-size:0.98em; margin-top:2px;">Mar 5, 2023</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <h3 class="card-title">From the GOAT</h3>
+                    <div class="poem-text" style="padding-left:0;">
+                        <p>“I start early and I stay late, day after day, year after year. It took me 17 years and 114 days to become an overnight success.”</p>
+                        <p>~ Lionel Messi (2004)</p>
+                    </div>
+                    <div class="barca-next" id="barcaNext" aria-live="polite">
+                        <span class="barca-next-label">Barça Next Match</span>
+                        <div class="barca-fixture">
+                            <img id="barcaHomeBadge" alt="" width="34" height="34">
+                            <span class="barca-vs">vs</span>
+                            <img id="barcaAwayBadge" alt="" width="34" height="34">
+                        </div>
+                        <span id="barcaAway" class="barca-opponent">…</span>
+                        <span id="barcaMeta" class="barca-meta">Loading…</span>
+                        <span id="barcaCountdown" class="barca-countdown"></span>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">June 10, 2025</span>
+                        <span class="new-tag">New</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                </div>
+            </div>
+
+            <!-- Connect and Projects Section -->
+            <div class="content-row">
+                <div class="content-card">
+                    <h3 class="card-title">Connect with Me</h3>
+                    <div class="social-icons">
+                        <a href="https://x.com/TheTortAndHare" class="social-icon" title="Twitter" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.linkedin.com/in/shubhamkumartrichy/" class="social-icon" title="LinkedIn" target="_blank"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/Shubhamkumartrichy" class="social-icon" title="GitHub" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://medium.com/@shubhamkumarcode" class="social-icon" title="Medium" target="_blank"><i class="fab fa-medium"></i></a>
+                        <a href="mailto:shubhamkumarcode@gmail.com" class="social-icon" title="Email" target="_blank"><i class="fas fa-envelope"></i></a>
+                    </div>
+                </div>
+
+                <div class="content-card">
+                    <div class="card-header">
+                        <span class="date">Jan 20, 2024</span>
+                        <span class="archived-tag">Archived</span>
+                    </div>
+                    <h3 class="card-title">Coming Soon...</h3>
+                    <p class="card-description">Something new is currently in the works. More details will appear here soon.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>&copy; 2024 Shubham Kumar</p>
+        </footer>
+    </div>
+
+    <!-- Mobile-only popup -->
+<div id="mobile-popup" class="mobile-popup-overlay">
+  <div class="mobile-popup-box">
+    <h2 class="mobile-popup-title">Notice</h2>
+    <p class="mobile-popup-msg">
+      This website is designed for laptop/desktop viewing.<br>
+      For the best experience, please use a larger screen.
+    </p>
+    <button id="mobile-popup-btn" class="mobile-popup-btn">Continue Anyways</button>
+  </div>
+</div>
+
+    <script src="script.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+        
+const greetings = [
+    "Hello everyone!",             // English
+    "सभी को नमस्कार!",             // Hindi
+    "எல்லோருக்கும் வணக்கம்!",      // Tamil
+    "ಎಲ್ಲರಿಗೂ ನಮಸ್ಕಾರ!",          // Kannada
+    "सर्वांना नमस्कार!",            // Marathi
+    "こんにちは皆さん!",              // Japanese
+    "大家好!",                       // Mandarin Chinese
+    "Hallo zusammen!",              // German
+    "¡Hola a todos!",               // Spanish
+    "Bonjour à tous!",              // French
+    "सर्वेभ्यः नमः!",               // Sanskrit
+    "Ciao a tutti!",                // Italian
+    "সবাইকে শুভেচ্ছা!",             // Bengali
+    "എല്ലാവർക്കും നമസ്കാരം!",         // Malayalam
+    "అందరికి నమస్కారం!",             // Telugu
+    "ਸਾਰੇਆਂ ਨੂੰ ਨਮਸਕਾਰ!"           // Punjabi
+];
+
+let idx = 0;
+setInterval(() => {
+    const greetingEl = document.getElementById('dynamic-greeting');
+    if (greetingEl) {
+        greetingEl.textContent = greetings[idx];
+    }
+    idx = (idx + 1) % greetings.length;
+}, 1000);
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const mapEl = document.getElementById("map");
+    if (mapEl && window.Plotly) {
+        var longStay = {
+          type: 'scattergeo',
+          mode: 'markers',
+          name: 'Spent >250 days',
+          text: [
+            "Nalanda (2005-2008)",
+            "Kolkata (2008-2010)",
+            "Trichy (2010-2020)",
+            "New Delhi (2020-2022)",
+            "Jais (2022-2025)",
+            "Bengaluru (2025-2026)"
+          ],
+          lon: [85.52, 88.36, 78.69, 77.21, 81.69, 77.59],
+          lat: [25.13, 22.57, 10.81, 28.61, 26.25, 12.97],
+          marker: { size: 10, color: 'teal', symbol: 'circle' },
+          hovertemplate: "%{text}<extra></extra>"
+        };
+
+        var shortStay = {
+          type: 'scattergeo',
+          mode: 'markers',
+          name: 'Spent <250 days',
+          text: ["Dehradun (2022)", "Wayanad (2024)", "Munnar (2024)"],
+          lon: [78.0322, 76.1320, 77.0595],
+          lat: [30.3165, 11.6854, 10.0889],
+          marker: { size: 10, color: 'orange', symbol: 'circle' },
+          hovertemplate: "%{text}<extra></extra>"
+        };
+
+        var layout = {
+          geo: {
+            scope: 'world',
+            projection: { type: 'natural earth' },
+            showland: true,
+            landcolor: "#f7f7f7",
+            showcountries: true,
+            countrycolor: "#222",
+            countrywidth: 0.5,
+            showframe: false,
+            showcoastlines: false,
+            bgcolor: 'rgba(0,0,0,0)'
+          },
+          legend: {
+            x: 0.05,
+            y: 0.95,
+            bgcolor: "#fff",
+            bordercolor: "#ccc",
+            borderwidth: 1,
+            font: {size: 12}
+          },
+          margin: {t: 0, r: 0, l: 0, b: 0}
+        };
+
+        Plotly.newPlot(mapEl, [longStay, shortStay], layout, {displayModeBar: false, responsive: true});
+    }
+
+    const posters = [
+        {src: "Media/Music/1.jpg", link: "https://music.youtube.com/watch?v=Ye-IK7YCE60", title: "Experience - Ludovico Einaudi"},
+        {src: "Media/Music/forest au lait.jpg", link: "https://music.youtube.com/watch?v=NIbIHn9QIME", title: "Butterfly Waltz - Brian Crain"},
+        {src: "Media/Music/river flows in you.jpg", link: "https://music.youtube.com/watch?v=LbQvd99RSiY", title: "River Flows in You - Yiruma"},
+        {src: "Media/Music/Spirited_Away_Japanese_poster.png", link: "https://www.youtube.com/playlist?list=PLJrkymb-Pon9EEoyUtHwoQfk8DHp8_h-O", title: "Nuvole Bianche - Ludovico Einaudi"}
+    ];
+    let musicIdx = 0;
+    const posterEl = document.getElementById('music-poster');
+    const dotsContainer = document.querySelector('.music-dots');
+    const prevBtn = document.querySelector('.music-nav-btn.prev-btn');
+    const nextBtn = document.querySelector('.music-nav-btn.next-btn');
+    const infoIcon = document.querySelector('.music-info-icon');
+
+    if (!posterEl || !dotsContainer || !prevBtn || !nextBtn || !infoIcon) {
+        return;
+    }
+
+    function renderDots() {
+        dotsContainer.innerHTML = '';
+        posters.forEach((_, i) => {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === musicIdx ? ' active' : '');
+            dot.style.cssText = 'width:12px;height:12px;border-radius:50%;background:#fff;opacity:' + (i === musicIdx ? '0.8' : '0.4') + ';margin:0 4px;display:inline-block;transition:opacity 0.2s;';
+            dot.onclick = () => {
+                musicIdx = i;
+                updatePoster(musicIdx);
+            };
+            dotsContainer.appendChild(dot);
+        });
+    }
+
+    function updatePoster(idx) {
+        posterEl.src = posters[idx].src;
+        renderDots();
+    }
+
+    posterEl.onclick = () => window.open(posters[musicIdx].link, '_blank');
+    prevBtn.onclick = () => {
+        musicIdx = (musicIdx - 1 + posters.length) % posters.length;
+        updatePoster(musicIdx);
+    };
+    nextBtn.onclick = () => {
+        musicIdx = (musicIdx + 1) % posters.length;
+        updatePoster(musicIdx);
+    };
+    infoIcon.onclick = () => alert("Click on the image to listen");
+
+    updatePoster(musicIdx);
+
+    setInterval(() => {
+        musicIdx = (musicIdx + 1) % posters.length;
+        updatePoster(musicIdx);
+    }, 1500);
+});
+</script>
+<script>
+// Rotating Lorenz attractor (rho = 28) for the Bifurcation & Chaos card
+(function () {
+    const c = document.getElementById('lorenzCard');
+    if (!c) return;
+    const SIG = 10, BET = 8 / 3, RHO = 28, H = 0.005;
+    const s = [1, 1, 1];
+    const f = (x, y, z) => [SIG * (y - x), x * (RHO - z) - y, x * y - BET * z];
+    function step() {
+        const [x, y, z] = s;
+        const k1 = f(x, y, z);
+        const k2 = f(x + H / 2 * k1[0], y + H / 2 * k1[1], z + H / 2 * k1[2]);
+        const k3 = f(x + H / 2 * k2[0], y + H / 2 * k2[1], z + H / 2 * k2[2]);
+        const k4 = f(x + H * k3[0], y + H * k3[1], z + H * k3[2]);
+        for (let i = 0; i < 3; i++) s[i] += H / 6 * (k1[i] + 2 * k2[i] + 2 * k3[i] + k4[i]);
+    }
+    for (let i = 0; i < 400; i++) step();
+    const N = 9000, pts = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) { pts[3 * i] = s[0]; pts[3 * i + 1] = s[1]; pts[3 * i + 2] = s[2]; step(); }
+
+    let ctx, w, h, theta = -0.6, head = 0, running = true;
+    function fit() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        w = c.clientWidth; h = c.clientHeight;
+        c.width = Math.round(w * dpr); c.height = Math.round(h * dpr);
+        ctx = c.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function draw() {
+        ctx.clearRect(0, 0, w, h);
+        const sc = Math.min(w / 56, h / 46), cx = w / 2, cy = h / 2 + 26 * sc;
+        const ct = Math.cos(theta), st = Math.sin(theta), CH = 120;
+        ctx.lineWidth = 0.6;
+        for (let a = 0; a < N - 1; a += CH) {
+            const e = Math.min(N - 1, a + CH);
+            let d = 0;
+            ctx.beginPath();
+            for (let i = a; i <= e; i++) {
+                const x = pts[3 * i], y = pts[3 * i + 1], z = pts[3 * i + 2];
+                d += x * st + y * ct;
+                const X = cx + (x * ct - y * st) * sc, Y = cy - z * sc;
+                i === a ? ctx.moveTo(X, Y) : ctx.lineTo(X, Y);
+            }
+            const t = Math.max(0, Math.min(1, (d / (e - a + 1) + 22) / 44));
+            ctx.strokeStyle = 'rgba(29,29,27,' + (0.2 + 0.6 * t) + ')';
+            ctx.stroke();
+        }
+        const x = pts[3 * head], y = pts[3 * head + 1], z = pts[3 * head + 2];
+        ctx.fillStyle = '#b3261e';
+        ctx.beginPath(); ctx.arc(cx + (x * ct - y * st) * sc, cy - z * sc, 2.5, 0, 7); ctx.fill();
+    }
+    function frame() {
+        if (!running) return;
+        theta += 0.004; head = (head + 3) % N;
+        draw();
+        requestAnimationFrame(frame);
+    }
+    fit(); draw();
+    window.addEventListener('resize', () => { fit(); draw(); });
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if ('IntersectionObserver' in window) {
+        new IntersectionObserver(es => {
+            const vis = es[0].isIntersecting;
+            if (vis && !running) { running = true; requestAnimationFrame(frame); }
+            else if (!vis) running = false;
+        }).observe(c);
+    }
+    requestAnimationFrame(frame);
+})();
+</script>
+<script>
+// Next FC Barcelona fixture (TheSportsDB free API, cached for an hour)
+(function () {
+    const box = document.getElementById('barcaNext');
+    if (!box) return;
+    const API = 'https://www.thesportsdb.com/api/v1/json/3/eventsnext.php?id=133739';
+    const KEY = 'barcaNextCache';
+    const $ = id => document.getElementById(id);
+    let kickoff = null;
+
+    function readCache() {
+        try {
+            const c = JSON.parse(localStorage.getItem(KEY));
+            if (c && Date.now() - c.t < 3600e3) return c.ev;
+        } catch (e) {}
+        return null;
+    }
+    function writeCache(ev) {
+        try { localStorage.setItem(KEY, JSON.stringify({ t: Date.now(), ev })); } catch (e) {}
+    }
+    function badge(img, url, name) {
+        if (!url) { img.style.visibility = 'hidden'; return; }
+        img.src = url + '/small';
+        img.alt = name + ' crest';
+        img.onerror = () => { img.onerror = null; img.src = url; };
+    }
+    function tick() {
+        if (!kickoff) return;
+        const ms = kickoff - Date.now();
+        const el = $('barcaCountdown');
+        if (ms <= 0) { el.textContent = ms > -2 * 3600e3 ? 'Live now' : ''; return; }
+        const d = Math.floor(ms / 864e5), h = Math.floor(ms / 36e5) % 24, m = Math.floor(ms / 6e4) % 60;
+        el.textContent = d > 0 ? `in ${d}d ${h}h` : `in ${h}h ${m}m`;
+    }
+    function render(ev) {
+        if (!ev) { fail(); return; }
+        const home = /barcelona/i.test(ev.strHomeTeam);
+        $('barcaAway').textContent = (home ? 'vs ' + ev.strAwayTeam : '@ ' + ev.strHomeTeam);
+        badge($('barcaHomeBadge'), ev.strHomeTeamBadge, ev.strHomeTeam);
+        badge($('barcaAwayBadge'), ev.strAwayTeamBadge, ev.strAwayTeam);
+        kickoff = ev.strTimestamp ? new Date(ev.strTimestamp + (/[zZ]|[+-]\d\d:?\d\d$/.test(ev.strTimestamp) ? '' : 'Z')) : null;
+        const when = kickoff && !isNaN(kickoff)
+            ? kickoff.toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+            : (ev.dateEvent || '');
+        $('barcaMeta').textContent = when;
+        box.classList.add('ready');
+        tick();
+        setInterval(tick, 60e3);
+    }
+    function fail() {
+        $('barcaMeta').textContent = 'Visca el Barça!';
+        $('barcaAway').textContent = 'No fixture';
+        $('barcaAwayBadge').style.visibility = 'hidden';
+        $('barcaHomeBadge').style.visibility = 'hidden';
+    }
+
+    const cached = readCache();
+    if (cached) { render(cached); return; }
+    fetch(API)
+        .then(r => r.ok ? r.json() : Promise.reject(r.status))
+        .then(d => {
+            const now = Date.now() - 2 * 3600e3;
+            const ev = (d.events || []).find(e => !e.strTimestamp || new Date(e.strTimestamp + 'Z') > now) || null;
+            if (ev) writeCache(ev);
+            render(ev);
+        })
+        .catch(fail);
+})();
+</script>
+</body>
+</html>
